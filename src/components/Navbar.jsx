@@ -34,6 +34,9 @@ const Navbar = () => {
                 <Link to="/dashboard" className="text-gray-600 hover:text-blue-600 font-medium">
                     Dashboard
                 </Link>
+                <Link to="/clientes" className="texte-gray-600 hover:text-blue-600 font-medium">
+                    Clientes
+                </Link>
                 <button 
                   onClick={handleLogout}
                   className="bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition-all text-sm font-semibold"

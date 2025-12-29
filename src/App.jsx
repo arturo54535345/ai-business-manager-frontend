@@ -8,9 +8,8 @@ import PublicLayout from './layouts/PublicLayout';
 import Home from './pages/public/Home';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register'
-
-// Página temporal para el Dashboard (la crearemos real en el paso 9)
 import Dashboard from './pages/private/Dashboard';
+import Clients from './pages/private/Clients'
 
 function App() {
   return (
@@ -33,6 +32,7 @@ function App() {
           {/* zona privada*/}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/clientes"element={<Clients/>}/>
             {/* Aquí ira clientes, tareas y la IA*/}
           </Route>
 
