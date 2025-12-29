@@ -41,7 +41,7 @@ const Home = () =>{
                 <p className="text-gray-600">Control total de tus contactos y su importancia para el negocio.</p>
             </div>
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                <dvi classNam="text-blue-600 text-3xl mb-4">Calendario</dvi>
+                <div className="text-blue-600 text-3xl mb-4">Calendario</div>
                 <h3 className="text-xl font-bold mb-2">Tareas Inteligentes</h3>
                 <p className="text-gray-600">Nunca olvides un vencimiento. Prioriza lo que de verdad importa.</p>
             </div>
@@ -55,3 +55,4 @@ const Home = () =>{
     </div>
     );
 };
+export default Home;

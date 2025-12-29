@@ -1,4 +1,4 @@
-import {createContext, useState, useEffet, useContext} from 'react';
+import {createContext, useState, useEffect, useContext} from 'react';
 import api from '../api/axios';// trearemos el axios el que maneja la conexion con el backend
 
 //esto es la creacion de la nube
@@ -10,7 +10,7 @@ export const AuthProvider = ({children}) => {
     const [loading, setLoading] = useState(true);// sirve para saber si estoy pensando al arrancar
 
     //vigilante de la sesion osea el useEffect
-    useEffet(() => {
+    useEffect(() => {
         const checkLogin = async () => {
             const token = localStorage.getItem('token');
             if(token){

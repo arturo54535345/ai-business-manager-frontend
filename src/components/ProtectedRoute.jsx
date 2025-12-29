@@ -1,5 +1,5 @@
 //vamos a crear el portero el cual preguntara al AuthContext 
-import {Negative, Outlet} from 'react-router-dom';
+import {Navigate, Outlet} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';//le pedimos ayuda al cerebro
 
 const ProtectedRoute = () => {

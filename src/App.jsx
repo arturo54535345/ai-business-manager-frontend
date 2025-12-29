@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicLayout from './layouts/PublicLayout';
 
+
 // Importamos las páginas que creamos en los pasos 6 y 7
 import Home from './pages/public/Home';
 import Login from './pages/public/Login';
