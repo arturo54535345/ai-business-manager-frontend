@@ -4,7 +4,7 @@ import axios from "axios";
 
 //configuramos
 const api = axios.create({
-    baseURL: '',
+    baseURL: 'http://192.168.0.65:3000/api',
 });
 
 //asistente de los correo por asi decirlo es un interceptor
