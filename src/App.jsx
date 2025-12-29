@@ -1,35 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicLayout from './layouts/PublicLayout';
 
+// Importamos las páginas que creamos en los pasos 6 y 7
+import Home from './pages/public/Home';
+import Login from './pages/public/Login';
+
+// Página temporal para el Dashboard (la crearemos real en el paso 9)
+const Dashboard = () => (
+  <div className="p-20 text-center">
+    <h1 className="text-3xl font-bold"> Panel de Control</h1>
+    <p className="mt-4 text-gray-600">¡Si ves esto, es que el Portero te ha dejado pasar!</p>
+  </div>
+);
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    // 1. El cerebro envuelve a todos para que tengan memoria
+    <AuthProvider>
+      
+      {/*gestiona las URL*/}
+      <BrowserRouter>
+        <Routes>
+          
+          {/*zona publica*/}
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Home />} />
+            {/*aqui ira nosotros precio etc...*/}
+          </Route>
+
+          {/*pagina del login*/}
+          <Route path="/login" element={<Login />} />
+
+          {/* zona privada*/}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            {/* Aquí ira clientes, tareas y la IA*/}
+          </Route>
+
+          {/*ruta de emergencia por si quiero escribir mas cosas*/}
+          <Route path="*" element={<div className="p-20 text-center">404 - Página no encontrada</div>} />
+
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
