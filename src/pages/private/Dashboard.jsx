@@ -1,6 +1,6 @@
 import {useAuth} from '../../context/AuthContext';
 import {useState, useEffect} from 'react';
-import api from '../../services/axios';
+import api from '../../api/axios';
 
 const Dashboard = () =>{
     const {user, logout} = useAuth();
