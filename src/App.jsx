@@ -9,12 +9,7 @@ import Home from './pages/public/Home';
 import Login from './pages/public/Login';
 
 // Página temporal para el Dashboard (la crearemos real en el paso 9)
-const Dashboard = () => (
-  <div className="p-20 text-center">
-    <h1 className="text-3xl font-bold"> Panel de Control</h1>
-    <p className="mt-4 text-gray-600">¡Si ves esto, es que el Portero te ha dejado pasar!</p>
-  </div>
-);
+import Dashboard from './pages/private/Dashboard';
 
 function App() {
   return (
