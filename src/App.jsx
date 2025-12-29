@@ -7,6 +7,7 @@ import PublicLayout from './layouts/PublicLayout';
 // Importamos las páginas que creamos en los pasos 6 y 7
 import Home from './pages/public/Home';
 import Login from './pages/public/Login';
+import Register from './pages/public/Register'
 
 // Página temporal para el Dashboard (la crearemos real en el paso 9)
 import Dashboard from './pages/private/Dashboard';
