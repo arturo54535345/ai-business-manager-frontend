@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {useAuth} from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Register = () =>{
     const [formData, setFormData] = useState({
@@ -30,7 +30,7 @@ const Register = () =>{
 
                 <div className="text-center mb-10">
                     <h2 className="text-3xl font-extrabold text-gray-900">Crea tu cuenta</h2>
-                    <p className="text-gray-500 mt-2">Empieza a gstionar tu negocio con IA</p>
+                    <p className="text-gray-500 mt-2">Empieza a gestionar tu negocio con IA</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">

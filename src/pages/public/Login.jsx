@@ -20,7 +20,7 @@ const Login = () =>{
             //llamo a la funcion login
             await login(email, password);
             //si todo esta correcto nos envia al dashboard
-            naivigate('/dashboard');
+            navigate('/dashboard');
         }catch(err) {
             //si los datos son incorrectos se mostraran estos resultados
             setError('Email o contraseña incorrectos. Revisa tu PC');
@@ -35,7 +35,7 @@ const Login = () =>{
                     <p className="tex-gray-500 mt-2">Introduce tus datos para gestionar tu negocio</p>
                 </div>
                 {/*formulario*/}
-                <from onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     {/*si algo falla saltara este error*/}
                     {error && (
                         <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100">
@@ -47,7 +47,7 @@ const Login = () =>{
                         <input
                         type="email"
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus: ring-blue-500 focus:border-transparent online-none transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-blue-500 focus:border-transparent online-none transition-all"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         />
@@ -71,7 +71,7 @@ const Login = () =>{
                     >
                         Entrar a mi Panel
                     </button>
-                </from>
+                </form>
                 <p className="text-center mt-8 text-gray-600">
                     ¿No tienes cuenta?{' '}
                     <Link to="/register" className="text-blue-600 font-bold hover:underline">

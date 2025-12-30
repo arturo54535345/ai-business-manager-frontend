@@ -2,7 +2,7 @@ import {createContext, useState, useEffect, useContext} from 'react';
 import api from '../api/axios';// trearemos el axios el que maneja la conexion con el backend
 
 //esto es la creacion de la nube
-const AuthContex = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
     //creo dos cajas
@@ -55,10 +55,10 @@ export const AuthProvider = ({children}) => {
 
     //reparto la info a todas las paginas osea el ({children})
     return(
-        <AuthContex.Provider value={{user, login, logout, loading}}>
+        <AuthContex.Provider value={{user, login, logout, register, loading}}>
             {children}
         </AuthContex.Provider>
     );
 };
 
-export const useAuth = () => useContext(AuthContex);
+export const useAuth = () => useContext(AuthContext);

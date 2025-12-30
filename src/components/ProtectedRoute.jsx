@@ -13,7 +13,7 @@ const ProtectedRoute = () => {
     //si no hay usuario (nadie ha iniciado sesion)
     if(!user){
         //le mandariamos directamente a la pagina de login
-        return <Negative to="/login" replace />;
+        return <Nevigate to="/login" replace />;
     }
 
     //si todo esta bien lo dejo pasat a la pagina que ese cliente queria ver 

@@ -40,7 +40,7 @@ const Dashboard = () =>{
             {/*tarjeta de resumen*/}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                    <p className="text-sm font-medium text-gray-500 uppercase">{status.clients}</p>
+                    <p className="text-sm font-medium text-gray-500 uppercase">{stats.clients}</p>
                 </div>
                 <div className="bg-white p-6 rounded-3xl shadow-sm border-gray-100 bg-gradient-to-br from-blue-600 to-indigo-700">
                     <p className="text-sm font-medium text-blue-100 uppercase">Estado de la IA</p>

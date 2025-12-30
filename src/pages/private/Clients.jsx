@@ -12,7 +12,7 @@ const Clients = () =>{
             try{
                 //llamamos a la ruta de los clientes del back
                 const res = await api.get('/clients');
-                setSyntheticLeadingComments(res.data);//se guarda esa lista en la caja
+                setClient(res.data);//se guarda esa lista en la caja
             }catch(error){
                 console.error("Error al traer clientes:", error);
             }finally{
@@ -36,13 +36,13 @@ const Clients = () =>{
             {/*cuerpo*/}
             {loading ? (
                 <p>Cargando clientes de la base de datos</p>
-            ) : Clients.length === 0 ? (
+            ) : client.length === 0 ? (
                 <div className="bg-white p-10 rounded-3xl border border-dashed border-gray-300 text-center">
                     <p className="text-gray-500">No hay clientes registrados todavia.</p>
                 </div> 
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Clients.map((client) =>(
+                    {client.map((client) =>(
                         <div key={client._id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-all">
                             <h3 className="text-xl font-bold text-gray-900">{client.name}</h3>
                             <p className="text-gray-500 text-sm">{client.email}</p>
