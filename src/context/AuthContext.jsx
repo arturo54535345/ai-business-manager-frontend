@@ -55,9 +55,9 @@ export const AuthProvider = ({children}) => {
 
     //reparto la info a todas las paginas osea el ({children})
     return(
-        <AuthContex.Provider value={{user, login, logout, register, loading}}>
+        <AuthContext.Provider value={{user, login, logout, register, loading}}>
             {children}
-        </AuthContex.Provider>
+        </AuthContext.Provider>
     );
 };
 
