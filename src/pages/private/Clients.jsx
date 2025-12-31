@@ -1,5 +1,6 @@
 import { useState, useEffect} from 'react';
 import api from '../../api/axios';
+import { Navigate } from 'react-router-dom';
 
 const Clients = () =>{
     //la caja donde guardo la lista que nos mandara el back
@@ -29,7 +30,9 @@ const Clients = () =>{
                     <h1 className="text-3xl font-bold text-gray-900">Mis Clientes</h1>
                     <p className="text-gray-500">Gestiona los contactos de tu negocio</p>
                 </div>
-                <button className="bg-blue-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-blue-700 transition-all">
+                <button
+                onClick={()=> Navigate('/clientes/nuevo')}
+                className="bg-blue-600 text-white px-5 py-2 rounded-xl font-bold hover:bg-blue-700 transition-all">
                     + Nuevo Cliente
                 </button>
             </div>
