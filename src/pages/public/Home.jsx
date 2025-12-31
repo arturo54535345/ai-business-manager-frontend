@@ -8,7 +8,7 @@ const Home = () =>{
             <div className="max-w-7xl mx-auto text-center">
                 <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 tracking-tight">
                     Gestiona tu negocio con <br/>
-                    <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-trasnparent">
+                    <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                         Inteligencia Artificial
                     </span>
                 </h1>
@@ -37,7 +37,7 @@ const Home = () =>{
         <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-8">
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                 <div className="text-blue-600 text--3xl mb-4">Te ayudamos</div>
-                <h3 className="text-xl font-bold mb-2">Clientes VIP</h3>
+                <h3 className="text-3xl font-bold mb-2">Clientes VIP</h3>
                 <p className="text-gray-600">Control total de tus contactos y su importancia para el negocio.</p>
             </div>
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">

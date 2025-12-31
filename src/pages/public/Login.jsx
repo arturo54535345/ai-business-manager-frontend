@@ -32,7 +32,7 @@ const Login = () =>{
 
                 <div className="text-center mb-10">
                     <h2 className="text-3xl font-extrabold text-gray-900">Bienvenido de nuevo</h2>
-                    <p className="tex-gray-500 mt-2">Introduce tus datos para gestionar tu negocio</p>
+                    <p className="text-gray-500 mt-2">Introduce tus datos para gestionar tu negocio</p>
                 </div>
                 {/*formulario*/}
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -47,7 +47,7 @@ const Login = () =>{
                         <input
                         type="email"
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-blue-500 focus:border-transparent online-none transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         />

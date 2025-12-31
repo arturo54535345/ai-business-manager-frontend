@@ -49,6 +49,16 @@ const Register = () =>{
                         />
                     </div>
                     <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Tu Email</label>
+                        <input
+                        type="email"
+                        required
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                        placeholder="arturo@ejemplo.com"
+                        onChange={()=> setFormData({...formData, email: e.target.value})}
+                        />
+                    </div>
+                    <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">Contraseña</label>
                         <input
                         type="password"
