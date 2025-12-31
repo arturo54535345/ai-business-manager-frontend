@@ -22,9 +22,9 @@ export const AuthProvider = ({children}) => {
         };
         checkLogin();
     }, []);
-    const register = async (username, email, password) => {
+    const register = async (name, email, password) => {
         //llamamos al back y le digo que cree este nuevo usuario
-        const res = await api.post('/auth/register', {username, email, password});
+        const res = await api.post('/auth/register', {name, email, password});
 
         //la gente al registrarse el back vuelve a enviar el token para que entren directamente
         localStorage.setItem('token', res.data.token);

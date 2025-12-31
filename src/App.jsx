@@ -33,6 +33,7 @@ function App() {
 
           {/*pagina del login*/}
           <Route path="/login" element={<Login />} />
+          <Route path="/register"element={<Register/>}/>
 
           {/* zona privada*/}
           <Route element={<ProtectedRoute />}>

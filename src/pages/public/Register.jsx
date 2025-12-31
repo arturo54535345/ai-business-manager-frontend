@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 
 const Register = () =>{
     const [formData, setFormData] = useState({
-        username: '',
+        name: '',
         email: '',
         password: '',
     });
@@ -18,7 +18,7 @@ const Register = () =>{
         setError(null);
 
         try{
-            await register(formData.username, formData.email, formData.password);
+            await register(formData.name, formData.email, formData.password);
             navigate('/dashboard');//si sale bien el registro sera enviado directamente al dashboard
         }catch(error){
             setError('No se pudo crear la cuenta. ¿Quizas el email ya existe?');
@@ -45,7 +45,7 @@ const Register = () =>{
                         type="text"
                         required
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                        onChange={(e)=> setFormData({...formData, username: e.target.value})}
+                        onChange={(e)=> setFormData({...formData, name: e.target.value})}
                         />
                     </div>
                     <div>
@@ -55,7 +55,7 @@ const Register = () =>{
                         required
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                         placeholder="arturo@ejemplo.com"
-                        onChange={()=> setFormData({...formData, email: e.target.value})}
+                        onChange={(e)=> setFormData({...formData, email: e.target.value})}
                         />
                     </div>
                     <div>
