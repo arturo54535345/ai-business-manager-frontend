@@ -5,16 +5,27 @@ import api from '../../api/axios';
 const Dashboard = () =>{
     const {user, logout} = useAuth();
     const [stats, setStats] = useState({clients: 0, tasks: 0});
+    const [loading, setLoading]= useState(true);
 
 
     //efecto que hace al pedir algo al pc nada mas entrar
     useEffect(()=>{
         const fetchDashboardData = async () =>{
             try{
+                const [resClients, resTasks] = await Promise.all([
+                    api.get('/clients'),
+                    api.get('/tasks')
+                ]);
+                setStats({
+                    clients:resClients.data.length,
+                    tasks: resTasks.data.length
+                });
                 //aqui llamo al back para traer los datos reales
                 console.log("Conectando con el PC para traer datos...");
             }catch(error){
                 console.error("Error al pedir datos al PC", error);
+            }finally{
+                setLoading(false);
             }
         };
         fetchDashboardData();
