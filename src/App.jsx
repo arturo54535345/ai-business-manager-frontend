@@ -13,6 +13,7 @@ import Clients from './pages/private/Clients'
 import AddClient from './pages/private/AddClient';
 import Tasks from './pages/private/Tasks';
 import AddTask from './pages/private/AddTask';
+import ConsultanIA from './pages/private/ConsultanIA';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route path="/clientes/nuevo"element={<AddClient/>}/>
             <Route path="/tareas"element={<Tasks/>}/>
             <Route path="/tareas/nueva"element={<AddClient/>}/>
+            <Route path="/ia"element={<ConsultanIA/>}/>
             {/* Aquí ira clientes, tareas y la IA*/}
           </Route>
 
