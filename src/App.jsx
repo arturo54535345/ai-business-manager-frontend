@@ -12,6 +12,7 @@ import Dashboard from './pages/private/Dashboard';
 import Clients from './pages/private/Clients'
 import AddClient from './pages/private/AddClient';
 import Tasks from './pages/private/Tasks';
+import AddTask from './pages/private/AddTask';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path="/clientes"element={<Clients/>}/>
             <Route path="/clientes/nuevo"element={<AddClient/>}/>
             <Route path="/tareas"element={<Tasks/>}/>
+            <Route path="/tareas/nueva"element={<AddClient/>}/>
             {/* Aquí ira clientes, tareas y la IA*/}
           </Route>
 
