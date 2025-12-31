@@ -22,6 +22,16 @@ const Clients = () =>{
         };
         getClients();
     }, []);
+    const handleDelete = async (id, name) =>{
+        if(window.confirm(`¿Seguro que quieres eliminar a ${name}?`)){
+            try{
+                await api.delete(`/clients/${id}`);
+                setClient(client.filter(c => c._id !== id));
+            }catch(error){
+                alert("No se pudo eliminar el cliente. Revisa la conexion.");
+            }
+        }
+    };
     return(
         <div className="p-8">
             {/*cabecera*/}
