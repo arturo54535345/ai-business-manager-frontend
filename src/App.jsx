@@ -15,6 +15,7 @@ import Tasks from './pages/private/Tasks';
 import AddTask from './pages/private/AddTask';
 import ConsultanIA from './pages/private/ConsultanIA';
 import EditClient from './pages/private/EditClient';
+import ClientDetails from './pages/private/ClientDetails';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
             <Route path="/tareas/nueva"element={<AddTask/>}/>
             <Route path="/ia"element={<ConsultanIA/>}/>
             <Route path="/clientes/editar/:id"element={<EditClient/>}/>
+            <Route path="/clientes/:id"element={<ClientDetails/>}/>
             {/* Aquí ira clientes, tareas y la IA*/}
           </Route>
 
