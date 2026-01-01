@@ -16,7 +16,7 @@ export const AuthProvider = ({children}) => {
             if(token){
                 //si hay un token recuperamos los datos del usuatio con el localStorage
                 const saveUser = JSON.parse(localStorage.getItem('user'));
-                setUser(savedUser);
+                setUser(saveUser);
             }
             setLoading(false); // una vez cargado dejamos de cargar
         };

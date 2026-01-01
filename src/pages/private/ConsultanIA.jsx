@@ -16,7 +16,7 @@ const ConsultanIA = () =>{
         try{
             //envio la pregunta al back
             const res = await api.post('/ai/consult', {prompt: question});
-            setAnswer(res.data.response);//se guardara la respuesta
+            setAnswer(res.data.aiAdvice);//se guardara la respuesta
         }catch(error){
             console.log("Error al consultar la IA:", error);
             setAnswer("Lo siento, Arturo. No he podido conectar con el back, revisa que este conectado.");

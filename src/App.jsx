@@ -41,7 +41,7 @@ function App() {
             <Route path="/clientes"element={<Clients/>}/>
             <Route path="/clientes/nuevo"element={<AddClient/>}/>
             <Route path="/tareas"element={<Tasks/>}/>
-            <Route path="/tareas/nueva"element={<AddClient/>}/>
+            <Route path="/tareas/nueva"element={<AddTask/>}/>
             <Route path="/ia"element={<ConsultanIA/>}/>
             <Route path="/clientes/editar/:id"element={<EditClient/>}/>
             {/* Aquí ira clientes, tareas y la IA*/}
