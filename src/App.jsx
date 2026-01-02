@@ -16,7 +16,7 @@ import AddTask from './pages/private/AddTask';
 import ConsultanIA from './pages/private/ConsultanIA';
 import EditClient from './pages/private/EditClient';
 import ClientDetails from './pages/private/ClientDetails';
-
+import EditTask from './pages/private/EditTask';
 function App() {
   return (
     // 1. El cerebro envuelve a todos para que tengan memoria
@@ -46,6 +46,7 @@ function App() {
             <Route path="/ia"element={<ConsultanIA/>}/>
             <Route path="/clientes/editar/:id"element={<EditClient/>}/>
             <Route path="/clientes/:id"element={<ClientDetails/>}/>
+            <Route path="/tareas/editar/:id"element={<EditTask/>}/>
             {/* Aquí ira clientes, tareas y la IA*/}
           </Route>
 

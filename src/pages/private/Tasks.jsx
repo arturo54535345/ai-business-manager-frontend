@@ -32,6 +32,16 @@ const Tasks = () => {
         }
     };
 
+    const toggleComplete = async (id, currentStatus) =>{
+        try{
+            const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';// si esta pending pasara a completed y si no de completed a pending
+            await api.put(`/tasks/${id}`, {status: newStatus});//llamo al back para que revise el cambio
+            setTasks(tasks.map(t=> t._id === id ? {...t, status:newStatus}: t));//actualizo la lista en pantalla sin tener que hacer nada
+        }catch(error){
+            alert("No se pudo actualizar la tarea");
+        }
+    };
+
     return (
         <div className="p-8">
             <div className="flex justify-between items-center mb-8">
@@ -57,18 +67,37 @@ const Tasks = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {tasks.map((task) => (
                         <div key={task._id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex justify-between items-start">
-                            <div>
-                                <h3 className={`text-xl font-bold ${task.completed ? 'line-through text-gray-400' : 'text-gray-900'}`}>
-                                    {task.title}
-                                </h3>
-                                <p className="text-gray-500 mt-1">{task.description}</p>
-                                {task.dueDate && (
-                                    <p className="text-xs font-semibold text-indigo-600 mt-3 uppercase tracking-wider">
-                                        📅 Fecha: {new Date(task.dueDate).toLocaleDateString()}
-                                    </p>
-                                )}
+                            
+                            {/* --- PARTE IZQUIERDA: BOTÓN CHECK + TEXTO --- */}
+                            <div className="flex gap-4">
+                                {/* EL BOTÓN DEL CÍRCULO (NUEVO) */}
+                                <button 
+                                    onClick={() => toggleComplete(task._id, task.status)}
+                                    className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                                        task.status === 'completed' 
+                                        ? 'bg-green-500 border-green-500 text-white' 
+                                        : 'border-gray-300 hover:border-blue-500'
+                                    }`}
+                                >
+                                    {task.status === 'completed' && '✓'}
+                                </button>
+
+                                <div>
+                                    {/* EL TÍTULO (Ahora se tacha si task.status es 'completed') */}
+                                    <h3 className={`text-xl font-bold ${task.status === 'completed' ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+                                        {task.title}
+                                    </h3>
+                                    <p className="text-gray-500 mt-1">{task.description}</p>
+                                    
+                                    {task.dueDate && (
+                                        <p className="text-xs font-semibold text-indigo-600 mt-3 uppercase tracking-wider">
+                                            Fecha: {new Date(task.dueDate).toLocaleDateString()}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                             
+                            {/* --- PARTE DERECHA: BOTÓN BORRAR --- */}
                             <button 
                                 onClick={() => handleDelete(task._id)}
                                 className="text-gray-300 hover:text-red-500 transition-colors p-2"
