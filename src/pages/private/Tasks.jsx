@@ -32,12 +32,12 @@ const Tasks = () => {
         }
     };
 
-    const toggleComplete = async (id, currentStatus) =>{
-        try{
-            const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';// si esta pending pasara a completed y si no de completed a pending
-            await api.put(`/tasks/${id}`, {status: newStatus});//llamo al back para que revise el cambio
-            setTasks(tasks.map(t=> t._id === id ? {...t, status:newStatus}: t));//actualizo la lista en pantalla sin tener que hacer nada
-        }catch(error){
+    const toggleComplete = async (id, currentStatus) => {
+        try {
+            const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
+            await api.put(`/tasks/${id}`, { status: newStatus });
+            setTasks(tasks.map(t => t._id === id ? { ...t, status: newStatus } : t));
+        } catch (error) {
             alert("No se pudo actualizar la tarea");
         }
     };
@@ -67,10 +67,7 @@ const Tasks = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {tasks.map((task) => (
                         <div key={task._id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex justify-between items-start">
-                            
-                            {/* --- PARTE IZQUIERDA: BOTÓN CHECK + TEXTO --- */}
                             <div className="flex gap-4">
-                                {/* EL BOTÓN DEL CÍRCULO (NUEVO) */}
                                 <button 
                                     onClick={() => toggleComplete(task._id, task.status)}
                                     className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
@@ -83,29 +80,42 @@ const Tasks = () => {
                                 </button>
 
                                 <div>
-                                    {/* EL TÍTULO (Ahora se tacha si task.status es 'completed') */}
                                     <h3 className={`text-xl font-bold ${task.status === 'completed' ? 'line-through text-gray-400' : 'text-gray-900'}`}>
                                         {task.title}
                                     </h3>
                                     <p className="text-gray-500 mt-1">{task.description}</p>
-                                    
                                     {task.dueDate && (
                                         <p className="text-xs font-semibold text-indigo-600 mt-3 uppercase tracking-wider">
-                                            Fecha: {new Date(task.dueDate).toLocaleDateString()}
+                                            📅 Fecha: {new Date(task.dueDate).toLocaleDateString()}
                                         </p>
                                     )}
                                 </div>
                             </div>
                             
-                            {/* --- PARTE DERECHA: BOTÓN BORRAR --- */}
-                            <button 
-                                onClick={() => handleDelete(task._id)}
-                                className="text-gray-300 hover:text-red-500 transition-colors p-2"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                                </svg>
-                            </button>
+                            {/* --- AQUÍ ESTÁ LA ZONA DE BOTONES (ACCIONES) --- */}
+                            <div className="flex items-center gap-2">
+                                {/* NUEVO BOTÓN: EDITAR (Icono de Lápiz) */}
+                                <button 
+                                    onClick={() => navigate(`/tareas/editar/${task._id}`)}
+                                    className="text-gray-400 hover:text-blue-600 transition-colors p-2"
+                                    title="Editar tarea"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                </button>
+
+                                {/* BOTÓN: BORRAR (Icono de Papelera) */}
+                                <button 
+                                    onClick={() => handleDelete(task._id)}
+                                    className="text-gray-300 hover:text-red-500 transition-colors p-2"
+                                    title="Eliminar tarea"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
