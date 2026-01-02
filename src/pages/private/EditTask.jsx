@@ -6,10 +6,10 @@ const EditTask = () =>{
     const {id} = useParams();
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useNavigate({
+    const [formData, setFormData] = useState({
         title:'',
         description:'',
-        prority:'',
+        priority:'',
         dueDate:'',
         client:'',
     });
@@ -33,7 +33,7 @@ const EditTask = () =>{
                     dueDate: task.dueDate ? task.dueDate.split('T')[0] : '',//limpio la fecha
                     client: task.client?._id || task.client
                 });
-                setClients(ClientRequest.data.clients || []);
+                setClients(clientesRes.data.clients || []);
             }catch(error){
                 console.error("Error al editar", error);
                 navigate('/tareas');

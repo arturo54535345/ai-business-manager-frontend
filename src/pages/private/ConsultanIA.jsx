@@ -62,7 +62,7 @@ const ConsultanIA = () => {
             </div>
 
             {/* FORMULARIO DE PREGUNTA */}
-            <form onSubmit={askAI} className="relative">
+            <form onSubmit={askIA} className="relative">
                 <input
                     type="text"
                     value={question}
