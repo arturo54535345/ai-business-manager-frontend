@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../api/axios';
 // 1. CORRECCIÓN: Usamos useNavigate (herramienta) en lugar de Navigate (componente)
 import { useNavigate } from 'react-router-dom'; 
+import {toast} from 'react-hot-toast';
 
 const Clients = () => {
     const [client, setClient] = useState([]);
@@ -25,15 +26,19 @@ const Clients = () => {
     }, []);
 
     const handleDelete = async (id, name) => {
-        if (window.confirm(`¿Seguro que quieres eliminar a ${name}?`)) {
-            try {
-                await api.delete(`/clients/${id}`);
-                setClient(client.filter(c => c._id !== id));
-            } catch (error) {
-                alert("No se pudo eliminar el cliente. Revisa la conexión.");
-            }
+    if (window.confirm(`¿Seguro que quieres eliminar a ${name}?`)) {
+        try {
+            await api.delete(`/clients/${id}`);
+            setClient(client.filter(c => c._id !== id));
+            
+            // NOTIFICACIÓN DE ÉXITO
+            toast.success(`Cliente ${name} eliminado.`);
+        } catch (error) {
+            // NOTIFICACIÓN DE ERROR
+            toast.error("No se pudo eliminar el cliente.");
         }
-    };
+    }
+};
 
     return (
         <div className="p-8">

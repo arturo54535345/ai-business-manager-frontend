@@ -1,13 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Conectamos con el cerebro
-
+import {toast} from 'react-hot-toast';
 const Navbar = () => {
     const { user, logout } = useAuth(); // Sacamos los datos y la función de salir
     const navigate = useNavigate();
 
     const handleLogout = () => {
-    logout(); // Borra el token y los datos del Mac
-    navigate('/'); // Nos manda a la Home
+        logout(); 
+        // Lógica: Avisamos al usuario antes de mandarlo fuera
+        toast.success('Sesión cerrada. ¡Vuelve pronto Arturo!', {
+            icon: '👋',
+            style: { borderRadius: '15px', background: '#333', color: '#fff' }
+        });
+        navigate('/'); 
     };
 
     return (

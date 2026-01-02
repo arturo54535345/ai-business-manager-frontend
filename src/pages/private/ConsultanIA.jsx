@@ -1,26 +1,32 @@
 import { useState } from "react";
 import api from '../../api/axios';
+import { toast } from 'react-hot-toast'; // 1. Importamos la herramienta
 
-const ConsultanIA = () =>{
-    const [question, setQuestion] = useState('')//lo que los clientes escriben
-    const [answer, setAnswer] = useState('')//lo que la IA responde
-    const [loading, setLoading] = useState(false);//para que los usuarios sepan si la ia esta pensando
+const ConsultanIA = () => {
+    const [question, setQuestion] = useState('');
+    const [answer, setAnswer] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const askIA = async (e) =>{
+    const askIA = async (e) => {
         e.preventDefault();
-        if(!question.trim()) return;//si no una pregunta no haremos nada de nada
+        if(!question.trim()) return;
 
         setLoading(true);
-        setAnswer('');//limpio la respuesta anterior para que parezca que escribe de nuevo
+        setAnswer('');
 
-        try{
-            //envio la pregunta al back
-            const res = await api.post('/ai/consult', {prompt: question});
-            setAnswer(res.data.aiAdvice);//se guardara la respuesta
-        }catch(error){
+        try {
+            const res = await api.post('/ai/consult', { prompt: question });
+            
+            // 2. ÉXITO: Avisamos que la IA ha terminado de pensar
+            setAnswer(res.data.aiAdvice);
+            toast.success('Análisis completado', { icon: '🤖' });
+
+        } catch (error) {
             console.log("Error al consultar la IA:", error);
-            setAnswer("Lo siento, Arturo. No he podido conectar con el back, revisa que este conectado.");
-        }finally{
+            // 3. ERROR: Notificación roja si el PC de tu hermano no responde
+            toast.error("No pude conectar con la IA. Revisa el motor (Backend).");
+            setAnswer("Hubo un error técnico. Inténtalo de nuevo.");
+        } finally {
             setLoading(false);
         }
     };

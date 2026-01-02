@@ -17,11 +17,14 @@ import ConsultanIA from './pages/private/ConsultanIA';
 import EditClient from './pages/private/EditClient';
 import ClientDetails from './pages/private/ClientDetails';
 import EditTask from './pages/private/EditTask';
+import { Toaster } from 'react-hot-toast';
+
+
 function App() {
   return (
     // 1. El cerebro envuelve a todos para que tengan memoria
     <AuthProvider>
-      
+      <Toaster position="top-right" reverseOrder={false}/>{/*Centro de notificaciones*/}
       {/*gestiona las URL*/}
       <BrowserRouter>
         <Routes>

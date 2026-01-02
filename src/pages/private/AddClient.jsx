@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios'; // El mensajero que habla con el PC
+import {toast} from 'react-hot-toast';
 
 const AddClient = () => {
     const [formData, setFormData] = useState({
@@ -17,11 +18,15 @@ const AddClient = () => {
         try {
             // Enviamos los datos al PC de tu hermano
             await api.post('/clients', formData);
+            //saldra un toast si todo sale bien 
+            toast.success('¡Cliente guardado correctamente!',{
+                duration:4000,
+                style: {borderRadius: '15px', background: '#333', color: '#fff'}
+            });
             // Si sale bien, volvemos a la lista de clientes
             navigate('/clientes');
         } catch (error) {
-            console.error("Error al crear cliente:", error);
-            alert("No se pudo crear el cliente. Revisa la conexión con el PC.");
+            toast.error('No se pudo guardar. Revisa la conexion.');
         } finally {
             setLoading(false);
         }
