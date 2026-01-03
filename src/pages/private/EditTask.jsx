@@ -33,7 +33,7 @@ const EditTask = () =>{
                     dueDate: task.dueDate ? task.dueDate.split('T')[0] : '',//limpio la fecha
                     client: task.client?._id || task.client
                 });
-                setClients(clientesRes.data.clients || []);
+                setClients(clientesRes.data.clients || clientesRes.data || []);
             }catch(error){
                 console.error("Error al editar", error);
                 navigate('/tareas');

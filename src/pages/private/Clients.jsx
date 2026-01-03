@@ -15,7 +15,7 @@ const Clients = () => {
         const getClients = async () => {
             try {
                 const res = await api.get('/clients');
-                setClient(res.data);
+                setClient(res.data.clients || res.data);
             } catch (error) {
                 console.error("Error al traer clientes:", error);
             } finally {
