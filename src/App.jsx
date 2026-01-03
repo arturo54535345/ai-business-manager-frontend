@@ -1,60 +1,79 @@
+// 1. HERRAMIENTAS EXTERNAS (El motor de la web)
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import PublicLayout from './layouts/PublicLayout';
-
-
-// Importamos las páginas que creamos en los pasos 6 y 7
-import Home from './pages/public/Home';
-import Login from './pages/public/Login';
-import Register from './pages/public/Register'
-import Dashboard from './pages/private/Dashboard';
-import Clients from './pages/private/Clients'
-import AddClient from './pages/private/AddClient';
-import Tasks from './pages/private/Tasks';
-import AddTask from './pages/private/AddTask';
-import ConsultanIA from './pages/private/ConsultanIA';
-import EditClient from './pages/private/EditClient';
-import ClientDetails from './pages/private/ClientDetails';
-import EditTask from './pages/private/EditTask';
 import { Toaster } from 'react-hot-toast';
 
+// 2. EL CEREBRO Y EL PORTERO (Memoria y Seguridad)
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// 3. LOS ESQUELETOS (Diseño global)
+import MainLayout from './layouts/MainLayout';
+
+// 4. PÁGINAS PÚBLICAS (Cualquiera puede entrar)
+import Home from './pages/public/Home';
+import Login from './pages/public/Login';
+import Register from './pages/public/Register';
+
+// 5. PÁGINAS PRIVADAS (Solo para usuarios con llave/token)
+import Dashboard from './pages/private/Dashboard';
+import Clients from './pages/private/Clients';
+import AddClient from './pages/private/AddClient';
+import EditClient from './pages/private/EditClient';
+import ClientDetails from './pages/private/ClientDetails';
+import Tasks from './pages/private/Tasks';
+import AddTask from './pages/private/AddTask';
+import EditTask from './pages/private/EditTask';
+import ConsultanIA from './pages/private/ConsultanIA';
 
 function App() {
   return (
-    // 1. El cerebro envuelve a todos para que tengan memoria
+    /* El cerebro envuelve a todos para que compartan la memoria del usuario */
     <AuthProvider>
-      <Toaster position="top-right" reverseOrder={false}/>{/*Centro de notificaciones*/}
-      {/*gestiona las URL*/}
+      
+      {/* El centro de notificaciones (las burbujas de aviso) */}
+      <Toaster position="top-right" reverseOrder={false} />
+
+      {/* El gestor de las calles (URL) de nuestra ciudad/web */}
       <BrowserRouter>
         <Routes>
           
-          {/*zona publica*/}
-          <Route element={<PublicLayout />}>
+          {/* A. CALLES CON NAVBAR (Todo lo que esté aquí dentro tendrá el Navbar arriba) */}
+          <Route element={<MainLayout />}>
+            
+            {/* Secciones Públicas */}
             <Route path="/" element={<Home />} />
-            {/*aqui ira nosotros precio etc...*/}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            {/* Aquí podrías añadir /nosotros en el futuro */}
+
+            {/* B. CALLES PROTEGIDAS (El portero revisa la entrada) */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              
+              {/* Sección de Clientes */}
+              <Route path="/clientes" element={<Clients />} />
+              <Route path="/clientes/nuevo" element={<AddClient />} />
+              <Route path="/clientes/:id" element={<ClientDetails />} />
+              <Route path="/clientes/editar/:id" element={<EditClient />} />
+              
+              {/* Sección de Tareas */}
+              <Route path="/tareas" element={<Tasks />} />
+              <Route path="/tareas/nueva" element={<AddTask />} />
+              <Route path="/tareas/editar/:id" element={<EditTask />} />
+              
+              {/* Sección de IA */}
+              <Route path="/ia" element={<ConsultanIA />} />
+            </Route>
+
           </Route>
 
-          {/*pagina del login*/}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register"element={<Register/>}/>
-
-          {/* zona privada*/}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/clientes"element={<Clients/>}/>
-            <Route path="/clientes/nuevo"element={<AddClient/>}/>
-            <Route path="/tareas"element={<Tasks/>}/>
-            <Route path="/tareas/nueva"element={<AddTask/>}/>
-            <Route path="/ia"element={<ConsultanIA/>}/>
-            <Route path="/clientes/editar/:id"element={<EditClient/>}/>
-            <Route path="/clientes/:id"element={<ClientDetails/>}/>
-            <Route path="/tareas/editar/:id"element={<EditTask/>}/>
-            {/* Aquí ira clientes, tareas y la IA*/}
-          </Route>
-
-          {/*ruta de emergencia por si quiero escribir mas cosas*/}
-          <Route path="*" element={<div className="p-20 text-center">404 - Página no encontrada</div>} />
+          {/* RUTA DE EMERGENCIA: Si Arturo escribe una calle que no existe */}
+          <Route path="*" element={
+            <div className="p-20 text-center">
+              <h2 className="text-2xl font-bold">404 - Página no encontrada</h2>
+              <p className="text-gray-500">Parece que te has perdido en el mapa.</p>
+            </div>
+          } />
 
         </Routes>
       </BrowserRouter>

@@ -1,28 +1,31 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from '../../api/axios';
-import { toast } from 'react-hot-toast'; // 1. Traemos la herramienta de notificaciones
+import { toast } from 'react-hot-toast';
 
 const AddTask = () => {
     const navigate = useNavigate();
     
-    // CAJAS DE MEMORIA
+    // 1. CAJA DE MEMORIA (Estado)
+    // Incluimos 'specifications' para los detalles extra que pidió el usuario
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        client: '',      // Añadimos el cliente
-        priority: 'medium', // Añadimos prioridad por defecto
+        specifications: '', // Nuevo campo para detalles técnicos
+        client: '',      
+        priority: 'medium', 
         dueDate: ''
     });
-    const [clients, setClients] = useState([]); // Para guardar la lista de clientes
+
+    const [clients, setClients] = useState([]); 
     const [loading, setLoading] = useState(false);
 
-    // 2. LÓGICA: Al entrar, buscamos los clientes para que puedas elegir uno
+    // 2. CARGA DE DATOS: Buscamos los clientes al abrir la página
     useEffect(() => {
         const fetchClients = async () => {
             try {
                 const res = await api.get('/clients');
-                // Guardamos solo el array de clientes que viene del motor
+                // Guardamos la lista de clientes que viene del motor
                 setClients(res.data.clients || res.data); 
             } catch (error) {
                 console.error("Error al traer clientes", error);
@@ -31,10 +34,11 @@ const AddTask = () => {
         fetchClients();
     }, []);
 
+    // 3. ENVÍO DEL FORMULARIO
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Verificamos que se haya elegido un cliente
+        // Validación: No dejamos crear tareas sin un cliente asociado
         if (!formData.client) {
             return toast.error('Por favor, selecciona un cliente para esta tarea');
         }
@@ -43,7 +47,6 @@ const AddTask = () => {
         try {
             await api.post('/tasks', formData);
             
-            // 3. ÉXITO: Notificación elegante en lugar de alert
             toast.success('¡Tarea creada con éxito! A por ello Arturo', {
                 icon: '🚀',
                 style: { borderRadius: '15px', background: '#333', color: '#fff' }
@@ -52,7 +55,6 @@ const AddTask = () => {
             navigate('/tareas');
         } catch (error) {
             console.error("Error al crear tarea:", error);
-            // 4. ERROR: Notificación roja
             toast.error('Vaya, no se pudo guardar la tarea. Revisa la conexión.');
         } finally {
             setLoading(false);
@@ -64,7 +66,8 @@ const AddTask = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-6">Nueva Tarea</h1>
 
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-                {/* TÍTULO */}
+                
+                {/* FILA 1: Título de la tarea */}
                 <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">¿Qué hay que hacer?</label>
                     <input
@@ -76,22 +79,47 @@ const AddTask = () => {
                     />
                 </div>
 
-                {/* SELECCIÓN DE CLIENTE (Lógica necesaria para la IA) */}
+                {/* FILA 2: Especificaciones (Detalles técnicos) */}
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Asociar a un Cliente</label>
-                    <select 
-                        required
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                        onChange={(e) => setFormData({...formData, client: e.target.value})}
-                    >
-                        <option value="">Selecciona quién es el cliente...</option>
-                        {clients.map(c => (
-                            <option key={c._id} value={c._id}>{c.name}</option>
-                        ))}
-                    </select>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Especificaciones o detalles extra</label>
+                    <textarea
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all h-32"
+                        placeholder="Escribe aquí los pasos a seguir o detalles técnicos de la tarea..."
+                        onChange={(e) => setFormData({...formData, specifications: e.target.value})}
+                    />
                 </div>
 
-                {/* FECHA */}
+                {/* FILA 3: Cliente y Prioridad (En dos columnas para ahorrar espacio) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Asociar a un Cliente</label>
+                        <select 
+                            required
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            onChange={(e) => setFormData({...formData, client: e.target.value})}
+                        >
+                            <option value="">Selecciona un cliente...</option>
+                            {clients.map(c => (
+                                <option key={c._id} value={c._id}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Prioridad</label>
+                        <select 
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            value={formData.priority}
+                            onChange={(e) => setFormData({...formData, priority: e.target.value})}
+                        >
+                            <option value="low">Baja</option>
+                            <option value="medium">Media</option>
+                            <option value="high">Alta</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* FILA 4: Fecha de vencimiento */}
                 <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">¿Para cuándo?</label>
                     <input
@@ -102,6 +130,7 @@ const AddTask = () => {
                     />
                 </div>
 
+                {/* BOTONES DE ACCIÓN */}
                 <div className="flex gap-4 pt-4">
                     <button
                         type="button"
