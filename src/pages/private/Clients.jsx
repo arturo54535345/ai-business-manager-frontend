@@ -83,7 +83,7 @@ const Clients = () => {
                                 {/* BOTÓN BORRAR (Papelera) */}
                                 <button 
                                     onClick={() => handleDelete(c._id, c.name)}
-                                    className="text-gray-400 hover:text-red-600 transition-colors"
+                                    className="text-red-400 hover:text-red-600 transition-colors p-2"
                                     title="Eliminar cliente"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

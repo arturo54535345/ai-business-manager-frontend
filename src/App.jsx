@@ -11,6 +11,7 @@ import MainLayout from './layouts/MainLayout';
 
 // 4. PÁGINAS PÚBLICAS (Cualquiera puede entrar)
 import Home from './pages/public/Home';
+import About from './pages/public/About';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
 
@@ -42,6 +43,7 @@ function App() {
             
             {/* Secciones Públicas */}
             <Route path="/" element={<Home />} />
+            <Route path="/nosotros"element={<About/>}/>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             {/* Aquí podrías añadir /nosotros en el futuro */}
