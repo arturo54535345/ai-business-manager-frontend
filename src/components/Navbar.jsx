@@ -36,6 +36,10 @@ const Navbar = () => {
             {/* si el usuario ya esta registrtado y logeado*/}
             {user ? (
             <>
+            {/* Dentro de tu Navbar.jsx, en la parte donde están los enlaces privados */}
+                <Link to="/perfil" className="text-gray-600 hover:text-blue-600 font-bold transition-colors">
+                    Mi Perfil
+                </Link>
                 <Link to="/dashboard" className="text-gray-600 hover:text-blue-600 font-medium">
                     Dashboard
                 </Link>
