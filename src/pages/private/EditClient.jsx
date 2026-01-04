@@ -1,29 +1,42 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from '../../api/axios';
-import { toast } from 'react-hot-toast'; // 1. Importamos la herramienta de notificaciones
+import { toast } from 'react-hot-toast';
 
 const EditClient = () => {
-    const { id } = useParams(); // Sacamos el ID del cliente de la URL
+    const { id } = useParams(); // Obtenemos el ID de la URL
     const navigate = useNavigate();
 
+    // 1. ESTADO INICIAL: Incluimos todos los campos nuevos
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        category: 'General'
+        companyName: '',
+        phone: '',
+        category: 'General',
+        technicalSheet: { notes: '' }
     });
+    
     const [loading, setLoading] = useState(true);
 
-    // 2. BUSCAR DATOS: Al entrar, traemos la información actual del cliente
+    // 2. CARGA DE DATOS: Traemos la info actual del cliente al cargar la página
     useEffect(() => {
         const fetchClient = async () => {
             try {
                 const res = await api.get(`/clients/${id}`);
-                setFormData(res.data); // Rellenamos el formulario con los datos reales
+                
+                // Mantenemos la estructura para no perder las notas anidadas
+                setFormData({
+                    ...res.data,
+                    companyName: res.data.companyName || '',
+                    phone: res.data.phone || '',
+                    technicalSheet: {
+                        notes: res.data.technicalSheet?.notes || ''
+                    }
+                });
             } catch (error) {
-                console.error("No se encontró el cliente", error);
-                // Notificación de error si el ID no existe o falla la red
-                toast.error("Hubo un problema al buscar este cliente.");
+                console.error("Error al buscar cliente", error);
+                toast.error("No se pudo encontrar el cliente.");
                 navigate('/clientes');
             } finally {
                 setLoading(false);
@@ -32,34 +45,34 @@ const EditClient = () => {
         fetchClient();
     }, [id, navigate]);
 
+    // 3. GUARDAR CAMBIOS
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // 3. ENVIAR CAMBIOS: Usamos PUT para actualizar al cliente en el PC
+            // Enviamos el PUT con todos los datos actualizados
             await api.put(`/clients/${id}`, formData);
             
-            // Notificación de éxito elegante
-            toast.success('¡Cambios guardados correctamente!', {
+            toast.success('¡Cliente actualizado con éxito!', {
                 style: { borderRadius: '15px', background: '#333', color: '#fff' }
             });
 
-            navigate('/clientes'); // Volvemos a la lista de clientes
+            navigate('/clientes'); 
         } catch (error) {
-            // Notificación si algo falla al guardar
-            toast.error("Error al actualizar el cliente. Revisa la conexión.");
+            toast.error("Error al guardar los cambios.");
         }
     };
 
-    if (loading) return <p className="p-8 text-center font-bold">Buscando los datos del cliente...</p>;
+    if (loading) return <p className="p-8 text-center font-bold text-gray-500">Cargando datos del cliente...</p>;
 
     return (
         <div className="p-8 max-w-2xl mx-auto">
             <h1 className="text-3xl font-bold text-gray-900 mb-6">Editar Cliente</h1>
             
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-                {/* NOMBRE */}
+            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 space-y-6">
+                
+                {/* FILA: Nombre */}
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre Completo</label>
                     <input
                         type="text"
                         value={formData.name}
@@ -69,9 +82,9 @@ const EditClient = () => {
                     />
                 </div>
 
-                {/* EMAIL */}
+                {/* FILA: Email */}
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Correo Electrónico</label>
                     <input
                         type="email"
                         value={formData.email}
@@ -81,7 +94,29 @@ const EditClient = () => {
                     />
                 </div>
 
-                {/* CATEGORÍA */}
+                {/* FILA DOBLE: Empresa y Teléfono */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Empresa</label>
+                        <input
+                            type="text"
+                            value={formData.companyName}
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            onChange={(e) => setFormData({...formData, companyName: e.target.value})}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Teléfono</label>
+                        <input
+                            type="tel"
+                            value={formData.phone}
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        />
+                    </div>
+                </div>
+
+                {/* FILA: Categoría */}
                 <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
                     <select 
@@ -95,11 +130,25 @@ const EditClient = () => {
                     </select>
                 </div>
 
+                {/* FILA: Notas Técnicas */}
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Notas del Cliente</label>
+                    <textarea
+                        value={formData.technicalSheet.notes}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all h-28"
+                        onChange={(e) => setFormData({
+                            ...formData, 
+                            technicalSheet: { ...formData.technicalSheet, notes: e.target.value } 
+                        })}
+                    />
+                </div>
+
+                {/* BOTONES */}
                 <div className="flex gap-4 pt-4">
                     <button
                         type="button"
                         onClick={() => navigate('/clientes')}
-                        className="flex-1 bg-gray-100 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
+                        className="flex-1 bg-gray-50 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all"
                     >
                         Cancelar
                     </button>
