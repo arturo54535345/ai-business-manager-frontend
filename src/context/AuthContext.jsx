@@ -1,64 +1,72 @@
 import {createContext, useState, useEffect, useContext} from 'react';
-import api from '../api/axios';// trearemos el axios el que maneja la conexion con el backend
+import api from '../api/axios'; // El mensajero que habla con el Backend
 
-//esto es la creacion de la nube
+// 1. CREACIÓN DE LA NUBE: Definimos el espacio donde vivirá la información
 const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
-    //creo dos cajas
-    const [user, setUser] = useState(null);//aqui guardo el nombre/email del usuario
-    const [loading, setLoading] = useState(true);// sirve para saber si estoy pensando al arrancar
+    // 2. LAS CAJAS DE MEMORIA (Estados)
+    const [user, setUser] = useState(null); // Aquí guardamos los datos del usuario logueado
+    const [loading, setLoading] = useState(true); // Para saber si la web está cargando al inicio
 
-    //vigilante de la sesion osea el useEffect
+    // --- NUEVA FUNCIÓN: ACTUALIZADOR MAESTRO ---
+    // Esta función permite cambiar los datos del usuario (como el color o el nombre) 
+    // y que se guarden para siempre en el navegador.
+    const updateUser = (userData) => {
+        setUser(userData); // Cambiamos los datos en la memoria de React
+        localStorage.setItem('user', JSON.stringify(userData)); // Los guardamos en el "bolsillo" del navegador
+    };
+
+    // 3. VIGILANTE DE LA SESIÓN: Revisa si ya tenías la sesión abierta al entrar
     useEffect(() => {
         const checkLogin = async () => {
             const token = localStorage.getItem('token');
             if(token){
-                //si hay un token recuperamos los datos del usuatio con el localStorage
+                // Si hay una llave (token), recuperamos los datos guardados
                 const saveUser = JSON.parse(localStorage.getItem('user'));
                 setUser(saveUser);
             }
-            setLoading(false); // una vez cargado dejamos de cargar
+            setLoading(false); // La web ya ha terminado de "pensar"
         };
         checkLogin();
     }, []);
+
+    // 4. FUNCIÓN DE REGISTRO: Para crear cuentas nuevas
     const register = async (name, email, password) => {
-        //llamamos al back y le digo que cree este nuevo usuario
         const res = await api.post('/auth/register', {name, email, password});
 
-        //la gente al registrarse el back vuelve a enviar el token para que entren directamente
+        // Guardamos la llave y el usuario que nos devuelve el Backend
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
 
-        //meto los datos en la nube
         setUser(res.data.user);
     }
-    //funcion  para entrar osea el Login
+
+    // 5. FUNCIÓN DE LOGIN: Para entrar en la oficina
     const login = async (email, password) => {
-        //con esto llamamos al pc
         const res = await api.post('/auth/login', {email, password});
         
-        //guardamos la llave osea el token y el usuario en el bolsillo del navegador
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
 
-        //Meto los datos en la nube asi toda la web lo ve
         setUser(res.data.user);
     };
 
-    //funcion para salir osea el Logout
+    // 6. FUNCIÓN DE LOGOUT: Para salir y limpiar todo
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        setUser(null);//limpiamos la nube
+        setUser(null); // Vaciamos la nube
     };
 
-    //reparto la info a todas las paginas osea el ({children})
+    // 7. REPARTO DE INFORMACIÓN: Entregamos las herramientas a todas las páginas
     return(
-        <AuthContext.Provider value={{user, login, logout, register, loading}}>
+        // CORRECCIÓN: Ahora incluimos 'updateUser' en el paquete que repartimos
+        <AuthContext.Provider value={{user, login, logout, register, updateUser, loading}}>
             {children}
         </AuthContext.Provider>
     );
 };
 
+// 8. ACCESO DIRECTO: Para que las páginas usen la nube fácilmente
 export const useAuth = () => useContext(AuthContext);

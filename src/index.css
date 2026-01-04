@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+/* 1. TEMAS DE COLOR (Variables que cambian) */
+.theme-blue { --brand: #2563eb; --brand-light: #dbeafe; }
+.theme-red { --brand: #e11d48; --brand-light: #ffe4e6; }
+.theme-green { --brand: #059669; --brand-light: #d1fae5; }
+.theme-purple { --brand: #7c3aed; --brand-light: #ede9fe; }
+
+/* 2. CLASES DINÁMICAS (Para usar en el código) */
+.bg-brand { background-color: var(--brand); }
+.text-brand { color: var(--brand); }
+.border-brand { border-color: var(--brand); }
+.bg-brand-light { background-color: var(--brand-light); }
+.text-brand-dark { color: var(--brand); filter: brightness(0.8); }
+
+/* Animación suave para que el cambio de color no sea brusco */
+* { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
