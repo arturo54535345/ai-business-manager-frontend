@@ -1,22 +1,20 @@
-//axios es como le mensajero el que une el back con el front
-
 import axios from "axios";
 
-//configuramos
 const api = axios.create({
     baseURL: 'http://localhost:3000/api',
 });
 
-//asistente de los correo por asi decirlo es un interceptor
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');//revisamos si tenemos la llave osea el token guardado
+    const token = localStorage.getItem('token'); 
 
-    if(token){
-        config.headers.Authorization = `Bearer ${token}`;// si hay llave se la pegaremos al mensaje para el Backend
+    if (token) {
+        // CAMBIO CLAVE: El nombre debe ser 'x-auth-token'
+        // para que coincida con lo que pide tu auth.middleware.js
+        config.headers['x-auth-token'] = token; 
     }
     return config;
-}, (error) =>{
-    return Promise.reject(error)    
+}, (error) => {
+    return Promise.reject(error);
 });
 
 export default api;
