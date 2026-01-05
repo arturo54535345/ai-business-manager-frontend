@@ -1,3 +1,9 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import api from '../../api/axios';
+
+
+
 const CompletedTasks = () =>{
     // CORRECCIÓN: Usamos minúscula para evitar confusiones con el nombre del componente
     const [completedTasks, setCompletedTasks] = useState([]);

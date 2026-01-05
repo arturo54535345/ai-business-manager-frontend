@@ -15,3 +15,14 @@
 
 /* Animación suave para que el cambio de color no sea brusco */
 * { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+
+/* Animacion de las tareas*/
+@keyframes pulse-red{
+    0% {bpx-shadow: 0 0 0 0 rgba(225,29,72,0.4);}
+    70% {box-shadow: 0 0 0 15px rgba(225,29,72,0);}
+    100% {box-shadow: 0 0 0 0 rgba(225,29,72,0);}
+}
+.border-urgent{
+    border: 2px solid #e11d48 !important;
+    animation: pulse-red 2s infinte;
+}

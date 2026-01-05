@@ -7,11 +7,10 @@ const EditTask = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // 1. ESTADO INICIAL: Añadimos 'specifications'
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        specifications: '', // Nuevo campo para detalles extra
+        specifications: '',
         priority: 'medium',
         dueDate: '',
         client: '',
@@ -20,10 +19,10 @@ const EditTask = () => {
     const [clients, setClients] = useState([]); 
     const [loading, setLoading] = useState(true);
 
-    // 2. CARGA DE DATOS: Buscamos la tarea y la lista de clientes al mismo tiempo
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // Pedimos la tarea y los clientes a la vez (más rápido)
                 const [taskRes, clientesRes] = await Promise.all([
                     api.get(`/tasks/${id}`),
                     api.get('/clients')
@@ -31,20 +30,21 @@ const EditTask = () => {
 
                 const task = taskRes.data;
                 
-                // Rellenamos el formulario con lo que ya existe
                 setFormData({
-                    title: task.title,
+                    title: task.title || '',
                     description: task.description || '',
-                    specifications: task.specifications || '', // Cargamos las especificaciones
+                    specifications: task.specifications || '',
                     priority: task.priority || 'medium',
-                    dueDate: task.dueDate ? task.dueDate.split('T')[0] : '', // Limpiamos la fecha para el input
-                    client: task.client?._id || task.client
+                    // Limpiamos la fecha para que el input tipo 'date' la entienda
+                    dueDate: task.dueDate ? task.dueDate.split('T')[0] : '', 
+                    // Guardamos solo el ID del cliente
+                    client: task.client?._id || task.client || ''
                 });
 
                 setClients(clientesRes.data.clients || clientesRes.data || []);
             } catch (error) {
                 console.error("Error al cargar datos de edición", error);
-                toast.error("No se pudo encontrar la tarea.");
+                toast.error("No se encontró la tarea o no tienes permiso.");
                 navigate('/tareas');
             } finally {
                 setLoading(false);
@@ -53,61 +53,64 @@ const EditTask = () => {
         fetchData();
     }, [id, navigate]);
 
-    // 3. ENVIAR CAMBIOS
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Enviamos los cambios al servidor
             await api.put(`/tasks/${id}`, formData);
             
-            toast.success('¡Tarea actualizada!', {
+            toast.success('¡Tarea actualizada correctamente!', {
                 icon: '📝',
-                style: { borderRadius: '15px', background: '#333', color: '#fff' }
+                style: { borderRadius: '20px', background: '#333', color: '#fff' }
             });
 
             navigate('/tareas');
         } catch (error) {
-            toast.error("Vaya, algo falló al guardar los cambios.");
+            toast.error("No se pudieron guardar los cambios.");
         }
     };
 
-    if (loading) return <p className="p-10 text-center font-bold text-gray-500">Cargando detalles de la tarea...</p>;
+    if (loading) return <div className="p-20 text-center font-black text-gray-300 animate-pulse uppercase tracking-widest">Recuperando detalles...</div>;
 
     return (
-        <div className="p-8 max-w-2xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">Editar Tarea</h1>
+        <div className="p-8 max-w-2xl mx-auto animate-fade-in">
+            <header className="mb-8">
+                <h1 className="text-3xl font-black text-gray-900 tracking-tight">Editar Tarea</h1>
+                <p className="text-gray-500 font-medium">Modifica los detalles del objetivo</p>
+            </header>
 
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 space-y-6">
+            <form onSubmit={handleSubmit} className="bg-white p-10 rounded-[45px] shadow-sm border border-gray-100 space-y-8">
                 
                 {/* TÍTULO */}
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">¿Qué hay que hacer?</label>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Título de la tarea</label>
                     <input
                         type="text"
                         value={formData.title}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                        className="w-full px-6 py-4 rounded-2xl border border-gray-100 focus:ring-2 focus:ring-brand outline-none transition-all bg-gray-50/50 font-bold"
                         onChange={(e) => setFormData({...formData, title: e.target.value})}
                     />
                 </div>
 
-                {/* ESPECIFICACIONES (El cuadro grande de detalles) */}
+                {/* ESPECIFICACIONES */}
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Especificaciones Técnicas</label>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Especificaciones para la IA</label>
                     <textarea
                         value={formData.specifications}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all h-32"
-                        placeholder="Detalla aquí los pasos o notas para la IA..."
+                        className="w-full px-6 py-4 rounded-2xl border border-gray-100 focus:ring-2 focus:ring-brand outline-none transition-all bg-gray-50/50 h-32 font-medium"
+                        placeholder="Instrucciones detalladas..."
                         onChange={(e) => setFormData({...formData, specifications: e.target.value})}
                     />
                 </div>
 
-                {/* CLIENTE */}
+                {/* CLIENTE ASOCIADO */}
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Cliente Asociado</label>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Cliente</label>
                     <select 
                         value={formData.client}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white"
+                        className="w-full px-6 py-4 rounded-2xl border border-gray-100 focus:ring-2 focus:ring-brand outline-none transition-all bg-white font-bold text-gray-700 cursor-pointer"
                         onChange={(e) => setFormData({...formData, client: e.target.value})}
                     >
                         <option value="">Selecciona un cliente</option>
@@ -117,45 +120,45 @@ const EditTask = () => {
                     </select>
                 </div>
 
-                {/* FILA DOBLE: Prioridad y Fecha */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* PRIORIDAD Y FECHA */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Prioridad</label>
+                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Prioridad</label>
                         <select 
                             value={formData.priority}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white"
+                            className="w-full px-6 py-4 rounded-2xl border border-gray-100 focus:ring-2 focus:ring-brand outline-none transition-all bg-white font-bold text-gray-700 cursor-pointer"
                             onChange={(e) => setFormData({...formData, priority: e.target.value})}
                         >
-                            <option value="low">Baja</option>
-                            <option value="medium">Media</option>
-                            <option value="high">Alta</option>
+                            <option value="low">🟢 Baja</option>
+                            <option value="medium">🟡 Media</option>
+                            <option value="high">🔴 Alta</option>
                         </select>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha Límite</label>
+                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Fecha Límite</label>
                         <input
                             type="date"
                             value={formData.dueDate}
                             required
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            className="w-full px-6 py-4 rounded-2xl border border-gray-100 focus:ring-2 focus:ring-brand outline-none transition-all bg-gray-50/50 font-bold"
                             onChange={(e) => setFormData({...formData, dueDate: e.target.value})}
                         />
                     </div>
                 </div>
 
-                {/* BOTONES */}
-                <div className="flex gap-4 pt-4">
+                {/* BOTONES DE ACCIÓN */}
+                <div className="flex gap-4 pt-6">
                     <button 
                         type="button" 
                         onClick={() => navigate('/tareas')} 
-                        className="flex-1 bg-gray-50 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all"
+                        className="flex-1 bg-white text-gray-500 py-4 rounded-2xl font-bold hover:bg-gray-50 border border-gray-100 transition-all"
                     >
-                        Cancelar
+                        Descartar
                     </button>
                     <button 
                         type="submit" 
-                        className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all"
+                        className="flex-1 bg-brand text-white py-4 rounded-2xl font-black shadow-xl shadow-brand/20 hover:opacity-90 transition-all"
                     >
                         Guardar Cambios
                     </button>
