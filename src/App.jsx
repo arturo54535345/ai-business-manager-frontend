@@ -1,18 +1,20 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
+// CEREBRO Y SEGURIDAD
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
+// MARCO VISUAL (Navbar + Footer + Temas)
 import MainLayout from './layouts/MainLayout';
 
-// PÁGINAS PÚBLICAS
+// PÁGINAS PÚBLICAS (Abiertas a todos)
 import Home from './pages/public/Home';
 import About from './pages/public/About';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
 
-// PÁGINAS PRIVADAS
+// PÁGINAS PRIVADAS (Solo con llave/token)
 import Dashboard from './pages/private/Dashboard';
 import Profile from './pages/private/Profile';
 import Clients from './pages/private/Clients';
@@ -22,17 +24,19 @@ import ClientDetails from './pages/private/ClientDetails';
 import Tasks from './pages/private/Tasks';
 import AddTask from './pages/private/AddTask';
 import EditTask from './pages/private/EditTask';
-import CompletedTasks from './pages/private/CompletedTasks'; // <-- 1. IMPORTANTE: Importar el registro
+import CompletedTasks from './pages/private/CompletedTasks'; 
 import AIConsultancy from './pages/private/AIConsultancy';
 
 function App() {
   return (
     <AuthProvider>
+      {/* 🟢 El Toaster permite ver las notificaciones de éxito/error arriba a la derecha */}
       <Toaster position="top-right" reverseOrder={false} />
 
       <BrowserRouter>
         <Routes>
           
+          {/* 1. GRUPO PRINCIPAL: Todo lo que lleva Navbar y Footer */}
           <Route element={<MainLayout />}>
             
             {/* --- SECCIONES PÚBLICAS --- */}
@@ -41,34 +45,40 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* --- SECCIONES PROTEGIDAS (Solo con llave/token) --- */}
+            {/* 2. GRUPO PROTEGIDO: El "Portero" (ProtectedRoute) vigila estas rutas */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/perfil" element={<Profile />} /> {/* <-- 2. CORRECCIÓN: Solo aquí dentro */}
+              <Route path="/perfil" element={<Profile />} />
               
-              {/* Sección de Clientes */}
+              {/* Gestión de Clientes */}
               <Route path="/clientes" element={<Clients />} />
               <Route path="/clientes/nuevo" element={<AddClient />} />
               <Route path="/clientes/:id" element={<ClientDetails />} />
               <Route path="/clientes/editar/:id" element={<EditClient />} />
               
-              {/* Sección de Tareas */}
+              {/* Gestión de Tareas */}
               <Route path="/tareas" element={<Tasks />} />
               <Route path="/tareas/nueva" element={<AddTask />} />
               <Route path="/tareas/editar/:id" element={<EditTask />} />
-              <Route path="/tareas/completadas" element={<CompletedTasks />} /> {/* <-- 3. CORRECCIÓN: Nueva calle */}
+              <Route path="/tareas/completadas" element={<CompletedTasks />} />
               
-              {/* Sección de IA */}
+              {/* Inteligencia Artificial (Chat Estratégico) */}
               <Route path="/ia" element={<AIConsultancy />} />
             </Route>
 
           </Route>
 
-          {/* RUTA 404 */}
+          {/* 3. RUTA 404: Si Arturo escribe una dirección que no existe */}
           <Route path="*" element={
-            <div className="p-20 text-center">
-              <h2 className="text-2xl font-bold">404 - Página no encontrada</h2>
-              <p className="text-gray-500">Parece que te has perdido en el mapa.</p>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-20 text-center">
+              <h2 className="text-4xl font-black text-gray-900 mb-4">404</h2>
+              <p className="text-gray-500 font-medium text-xl">Parece que esta página no existe en tu sistema.</p>
+              <button 
+                onClick={() => window.location.href = '/dashboard'}
+                className="mt-8 bg-brand text-white px-8 py-3 rounded-2xl font-bold shadow-lg"
+              >
+                Volver al Panel
+              </button>
             </div>
           } />
 
