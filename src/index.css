@@ -26,3 +26,28 @@
     border: 2px solid #e11d48 !important;
     animation: pulse-red 2s infinte;
 }
+
+.dark{
+    --bg-main: #0f172a;   
+    --bg-card: #1e293b;   
+    --text-main: #f8fafc; 
+    --text-muted: #94a3b8; 
+}
+
+.dark body{
+    background-color: var(--bg-main);
+    color: var(--text-main);
+
+}
+
+.dark .bg-white{
+    background-color: var(--bg-card) !important;
+    border-color: #334155 !important;
+    color: var(--text-main) !important;
+}
+
+.dark .text-gray-900 {color: #f8fafc !important}
+.dark .text-gray-500 { color: #94a3b8 !important; }
+
+
+
