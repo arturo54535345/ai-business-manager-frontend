@@ -27,6 +27,7 @@ import AddTask from './pages/private/AddTask';
 import EditTask from './pages/private/EditTask';
 import CompletedTasks from './pages/private/CompletedTasks'; 
 import AIConsultancy from './pages/private/AIConsultancy';
+import Finance from './pages/private/Finance';
 
 function App() {
   return (
@@ -63,6 +64,10 @@ function App() {
               <Route path="/tareas/nueva" element={<AddTask />} />
               <Route path="/tareas/editar/:id" element={<EditTask />} />
               <Route path="/tareas/completadas" element={<CompletedTasks />} />
+
+              {/* Gestión Financiera */}
+              <Route path="/finanzas" element={<Finance />} />
+
               
               {/* Inteligencia Artificial (Chat Estratégico) */}
               <Route path="/ia" element={<AIConsultancy />} />

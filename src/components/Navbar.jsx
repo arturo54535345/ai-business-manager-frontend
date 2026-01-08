@@ -147,6 +147,13 @@ const Navbar = () => {
                 </Link>
 
                 <Link
+                  to="/finanzas"
+                  className="text-gray-500 hover:text-brand font-medium text-sm"
+                >
+                  Finanzas
+                </Link>
+
+                <Link
                   to="/ia"
                   className="text-gray-500 hover:text-brand font-medium text-sm"
                 >
