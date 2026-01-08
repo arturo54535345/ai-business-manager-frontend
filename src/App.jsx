@@ -22,6 +22,7 @@ import AddClient from './pages/private/AddClient';
 import EditClient from './pages/private/EditClient';
 import ClientDetails from './pages/private/ClientDetails';
 import Tasks from './pages/private/Tasks';
+import TaskDetails from './pages/private/TaskDetails';
 import AddTask from './pages/private/AddTask';
 import EditTask from './pages/private/EditTask';
 import CompletedTasks from './pages/private/CompletedTasks'; 
@@ -58,6 +59,7 @@ function App() {
               
               {/* Gestión de Tareas */}
               <Route path="/tareas" element={<Tasks />} />
+              <Route path="/tareas/:id" element={<TaskDetails />} />
               <Route path="/tareas/nueva" element={<AddTask />} />
               <Route path="/tareas/editar/:id" element={<EditTask />} />
               <Route path="/tareas/completadas" element={<CompletedTasks />} />

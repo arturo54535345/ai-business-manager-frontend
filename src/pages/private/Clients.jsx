@@ -4,56 +4,49 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const Clients = () => {
-    // 1. ESTADOS: Nuestras cajas de memoria
-    const [client, setClient] = useState([]); 
-    const [loading, setLoading] = useState(true); 
-    const [searchTerm, setSearchTerm] = useState(''); 
-    const [categoryFilter, setCategoryFilter] = useState(''); 
+    // -------------------------------------------------------------------------
+    // 🧠 SECCIÓN 1: LOS ESTADOS (Nuestras cajas de memoria)
+    // -------------------------------------------------------------------------
+    const [client, setClient] = useState([]); // Guarda la lista de clientes que vienen de la base de datos.
+    const [loading, setLoading] = useState(true); // Controla si mostramos el mensaje de "Sincronizando...".
+    const [searchTerm, setSearchTerm] = useState(''); // Guarda el nombre que Arturo escribe en la lupa.
+    const [categoryFilter, setCategoryFilter] = useState(''); // Guarda la categoría (VIP, Potencial...) elegida.
     
-    const navigate = useNavigate(); 
+    const navigate = useNavigate(); // El mando a distancia para movernos entre páginas.
 
-    // 🟢 FUNCIÓN MAESTRA DE EXPORTACIÓN (CSV)
+    // -------------------------------------------------------------------------
+    // 📥 SECCIÓN 2: EXPORTACIÓN (Tu secretaria para Excel)
+    // -------------------------------------------------------------------------
     const exportToCSV = () => {
-        if (client.length === 0) {
-            return toast.error("No hay clientes para exportar.");
-        }
+        if (client.length === 0) return toast.error("No hay clientes para exportar.");
 
-        // 1. Títulos de las columnas
-        const headers = ["Nombre", "Email", "Telefono", "Categoria", "Fecha de Registro"];
-        
-        // 2. Transformamos los datos de los clientes en filas de texto
+        const headers = ["Nombre", "Email", "Telefono", "Categoria", "Tareas Pendientes"];
         const rows = client.map(c => [
-            `"${c.name}"`, // Usamos comillas por si el nombre tiene comas
+            `"${c.name}"`,
             `"${c.email || 'Sin email'}"`,
             `"${c.phone || 'Sin telefono'}"`,
             `"${c.category || 'General'}"`,
-            `"${new Date(c.createdAt).toLocaleDateString()}"`
+            `"${c.taskCount || 0}"` // 🟢 Incluimos el contador en tu Excel
         ]);
 
-        // 3. Unimos todo con comas y saltos de línea
-        const csvContent = [
-            headers.join(","),
-            ...rows.map(row => row.join(","))
-        ].join("\n");
-
-        // 4. Creamos el archivo y disparamos la descarga
+        const csvContent = [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", `Clientes_Arturo_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
+        link.href = url;
+        link.download = `Clientes_Arturo_${new Date().toISOString().split('T')[0]}.csv`;
         link.click();
-        document.body.removeChild(link);
         
         toast.success("Archivo descargado correctamente");
     };
 
-    // 2. LÓGICA DE CARGA
+    // -------------------------------------------------------------------------
+    // 📡 SECCIÓN 3: EL VIGILANTE (useEffect)
+    // -------------------------------------------------------------------------
     useEffect(() => {
         const getClients = async () => {
             try {
+                // Pedimos los clientes al servidor enviando los filtros de búsqueda.
                 const res = await api.get(`/clients?search=${searchTerm}&category=${categoryFilter}`);
                 setClient(res.data.clients || res.data);
             } catch (error) {
@@ -63,25 +56,31 @@ const Clients = () => {
             }
         };
         getClients();
+        // 👨‍🏫 Lógica: Se activa cada vez que Arturo cambia un filtro.
     }, [searchTerm, categoryFilter]); 
 
-    // 3. FUNCIÓN ELIMINAR
+    // -------------------------------------------------------------------------
+    // 🗑️ SECCIÓN 4: ACCIONES (Borrar cliente)
+    // -------------------------------------------------------------------------
     const handleDelete = async (id, name) => {
         if (window.confirm(`¿Seguro que quieres eliminar a ${name}?`)) {
             try {
                 await api.delete(`/clients/${id}`);
                 setClient(client.filter(c => c._id !== id));
-                toast.success(`Cliente ${name} eliminado.`);
+                toast.success(`Cliente eliminado.`);
             } catch (error) {
-                toast.error("No se pudo eliminar el cliente.");
+                toast.error("No se pudo eliminar.");
             }
         }
     };
 
+    // -------------------------------------------------------------------------
+    // 🖼️ SECCIÓN 5: EL RENDERIZADO (Lo que Arturo ve)
+    // -------------------------------------------------------------------------
     return (
         <div className="p-8 max-w-7xl mx-auto animate-fade-in">
             
-            {/* CABECERA: Título y Grupo de Botones */}
+            {/* CABECERA */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
                 <div>
                     <h1 className="text-4xl font-black text-gray-900 tracking-tight">Mis Clientes</h1>
@@ -89,26 +88,16 @@ const Clients = () => {
                 </div>
                 
                 <div className="flex items-center gap-3 w-full md:w-auto">
-                    {/* Botón de Exportar (Estilo secundario elegante) */}
-                    <button
-                        onClick={exportToCSV}
-                        className="flex-1 md:flex-none bg-white text-gray-600 px-6 py-4 rounded-2xl font-bold border border-gray-100 shadow-sm hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
-                    >
-                        <span className="text-lg">📥</span> 
-                        <span>Exportar</span>
+                    <button onClick={exportToCSV} className="flex-1 md:flex-none bg-white text-gray-600 px-6 py-4 rounded-2xl font-bold border border-gray-100 shadow-sm hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                        <span>📥</span> Exportar
                     </button>
-
-                    {/* Botón de Nuevo Cliente (Principal) */}
-                    <button
-                        onClick={() => navigate('/clientes/nuevo')}
-                        className="flex-1 md:flex-none bg-brand text-white px-8 py-4 rounded-2xl font-black shadow-xl shadow-brand/20 hover:opacity-90 transition-all"
-                    >
+                    <button onClick={() => navigate('/clientes/nuevo')} className="flex-1 md:flex-none bg-brand text-white px-8 py-4 rounded-2xl font-black shadow-xl shadow-brand/20 hover:opacity-90 transition-all">
                         + Nuevo Cliente
                     </button>
                 </div>
             </div>
 
-            {/* --- SECCIÓN DE BÚSQUEDA Y FILTROS --- */}
+            {/* BÚSQUEDA Y FILTROS */}
             <div className="flex flex-col md:flex-row gap-4 mb-10">
                 <div className="flex-grow relative">
                     <input 
@@ -149,17 +138,17 @@ const Clients = () => {
                             key={c._id} 
                             className="group bg-white p-8 rounded-[40px] shadow-sm border border-gray-100 hover:border-brand hover:shadow-2xl hover:shadow-brand/10 transition-all duration-500 relative"
                         >
+                            {/* 🟢 NUEVO: CONTADOR DE TAREAS PENDIENTES */}
+                            {/* 👨‍🏫 Solo aparece si el número es mayor que 0 */}
+                            {c.taskCount > 0 && (
+                                <div className="absolute top-8 left-28 bg-orange-500 text-white text-[9px] font-black px-3 py-1.5 rounded-lg shadow-lg shadow-orange-100 animate-pulse uppercase tracking-widest z-10">
+                                    {c.taskCount} {c.taskCount === 1 ? 'Tarea' : 'Tareas'}
+                                </div>
+                            )}
+
                             <div className="absolute top-8 right-8 flex gap-2">
-                                <button onClick={() => navigate(`/clientes/editar/${c._id}`)} className="p-2 text-gray-300 hover:text-brand transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                    </svg>
-                                </button>
-                                <button onClick={() => handleDelete(c._id, c.name)} className="p-2 text-gray-300 hover:text-red-500 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                                    </svg>
-                                </button>
+                                <button onClick={() => navigate(`/clientes/editar/${c._id}`)} className="p-2 text-gray-300 hover:text-brand transition-colors">✎</button>
+                                <button onClick={() => handleDelete(c._id, c.name)} className="p-2 text-gray-300 hover:text-red-500 transition-colors">🗑</button>
                             </div>
 
                             <div onClick={() => navigate(`/clientes/${c._id}`)} className="cursor-pointer">
