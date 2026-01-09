@@ -1,94 +1,59 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-
-// CEREBRO Y SEGURIDAD
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import PrivateLayout from './layouts/PrivateLayout'; 
 
-// MARCO VISUAL (Navbar + Footer + Temas)
-import MainLayout from './layouts/MainLayout';
-
-// PÁGINAS PÚBLICAS (Abiertas a todos)
+// PÁGINAS
 import Home from './pages/public/Home';
-import About from './pages/public/About';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
-
-// PÁGINAS PRIVADAS (Solo con llave/token)
 import Dashboard from './pages/private/Dashboard';
-import Profile from './pages/private/Profile';
 import Clients from './pages/private/Clients';
-import AddClient from './pages/private/AddClient';
-import EditClient from './pages/private/EditClient';
-import ClientDetails from './pages/private/ClientDetails';
+import AddClient from './pages/private/AddClient'; // ✅ Nueva
+import EditClient from './pages/private/EditClient'; // ✅ Nueva
+import ClientDetails from './pages/private/ClientDetails'; // ✅ Nueva
 import Tasks from './pages/private/Tasks';
-import TaskDetails from './pages/private/TaskDetails';
-import AddTask from './pages/private/AddTask';
-import EditTask from './pages/private/EditTask';
-import CompletedTasks from './pages/private/CompletedTasks'; 
-import AIConsultancy from './pages/private/AIConsultancy';
+import AddTask from './pages/private/AddTask'; // ✅ Nueva
+import EditTask from './pages/private/EditTask'; // ✅ Nueva
+import TaskDetails from './pages/private/TaskDetails'; // ✅ Nueva
+import CompletedTasks from './pages/private/CompletedTasks'; // ✅ Nueva
 import Finance from './pages/private/Finance';
+import AIConsultancy from './pages/private/AIConsultancy';
+import Profile from './pages/private/Profile';
 
 function App() {
   return (
     <AuthProvider>
-      {/* 🟢 El Toaster permite ver las notificaciones de éxito/error arriba a la derecha */}
-      <Toaster position="top-right" reverseOrder={false} />
-
+      <Toaster position="top-right" />
       <BrowserRouter>
         <Routes>
-          
-          {/* 1. GRUPO PRINCIPAL: Todo lo que lleva Navbar y Footer */}
-          <Route element={<MainLayout />}>
-            
-            {/* --- SECCIONES PÚBLICAS --- */}
-            <Route path="/" element={<Home />} />
-            <Route path="/nosotros" element={<About />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-            {/* 2. GRUPO PROTEGIDO: El "Portero" (ProtectedRoute) vigila estas rutas */}
-            <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute />}>
+            <Route element={<PrivateLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/perfil" element={<Profile />} />
               
-              {/* Gestión de Clientes */}
+              {/* RUTAS DE CLIENTES */}
               <Route path="/clientes" element={<Clients />} />
               <Route path="/clientes/nuevo" element={<AddClient />} />
               <Route path="/clientes/:id" element={<ClientDetails />} />
               <Route path="/clientes/editar/:id" element={<EditClient />} />
-              
-              {/* Gestión de Tareas */}
+
+              {/* RUTAS DE TAREAS */}
               <Route path="/tareas" element={<Tasks />} />
-              <Route path="/tareas/:id" element={<TaskDetails />} />
               <Route path="/tareas/nueva" element={<AddTask />} />
+              <Route path="/tareas/:id" element={<TaskDetails />} />
               <Route path="/tareas/editar/:id" element={<EditTask />} />
               <Route path="/tareas/completadas" element={<CompletedTasks />} />
 
-              {/* Gestión Financiera */}
               <Route path="/finanzas" element={<Finance />} />
-
-              
-              {/* Inteligencia Artificial (Chat Estratégico) */}
               <Route path="/ia" element={<AIConsultancy />} />
+              <Route path="/perfil" element={<Profile />} />
             </Route>
-
           </Route>
-
-          {/* 3. RUTA 404: Si Arturo escribe una dirección que no existe */}
-          <Route path="*" element={
-            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-20 text-center">
-              <h2 className="text-4xl font-black text-gray-900 mb-4">404</h2>
-              <p className="text-gray-500 font-medium text-xl">Parece que esta página no existe en tu sistema.</p>
-              <button 
-                onClick={() => window.location.href = '/dashboard'}
-                className="mt-8 bg-brand text-white px-8 py-3 rounded-2xl font-bold shadow-lg"
-              >
-                Volver al Panel
-              </button>
-            </div>
-          } />
-
         </Routes>
       </BrowserRouter>
     </AuthProvider>

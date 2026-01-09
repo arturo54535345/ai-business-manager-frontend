@@ -1,199 +1,109 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+// -------------------------------------------------------------------------
+// 📂 ARCHIVO: src/components/Navbar.jsx
+// 📝 DESCRIPCIÓN: Panel de navegación lateral con estética de puente de mando.
+// -------------------------------------------------------------------------
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { toast } from "react-hot-toast";
-import api from "../api/axios";
-import { useState, useEffect } from "react";
 
-const Navbar = () => {
-  // 🧠 1. LAS HERRAMIENTAS (Hooks y Contexto)
-  // Sacamos los datos del usuario y funciones de cerrar sesión y actualizar perfil del "cerebro" central (AuthContext).
-  const { user, logout, updateUser } = useAuth();
-  const navigate = useNavigate(); // El mando a distancia para viajar entre páginas.
-  const location = useLocation(); // El radar que nos dice en qué página estamos ahora mismo.
+const Navbar = ({ closeMenu }) => {
+  const location = useLocation();
+  const { user, logout } = useAuth();
 
-  // 📦 2. LA PIZARRA DE URGENCIA
-  // Un interruptor que se pone en 'true' (encendido) si hay tareas que venzan pronto.
-  const [hasUrgency, setHasUrgency] = useState(false);
-
-  // 📡 3. EL VIGILANTE DE TAREAS (useEffect)
-  // Este código corre cada vez que entras a la web o cambias de sección.
-  useEffect(() => {
-    const checkUrgentTasks = async () => {
-      // 🕵️ Seguridad: Si no hay usuario, no preguntamos nada al servidor.
-      if (!user) return;
-
-      try {
-        const res = await api.get("/tasks");
-
-        // 👨‍🏫 TRUCO DE PROFE: Nos aseguramos de tener una lista real (Array).
-        // Si el servidor nos manda una caja con tareas, la abrimos. Si no, usamos una lista vacía [].
-        const tasks = Array.isArray(res.data) ? res.data : res.data.tasks || [];
-
-        const now = new Date();
-        const urgentLimit = 48 * 60 * 60 * 1000; // El límite de 48 horas en milisegundos.
-        let isThereUrgency = false; // Empezamos asumiendo que no hay nada urgente.
-
-        // Solo trabajamos si realmente hay tareas en la lista.
-        if (tasks.length > 0) {
-          // Buscamos si "alguna" (some) cumple las condiciones de urgencia.
-          const isThereUrgency = tasks.some((task) => {
-            if (task.status === "completed" || !task.dueDate) return false;
-            const diff = new Date(task.dueDate) - now;
-            // Urgente si vence en menos de 48h y no lleva más de 24h de retraso.
-            return diff > -24 * 60 * 60 * 1000 && diff < urgentLimit;
-          });
-
-          // 🔔 NOTIFICACIÓN DE ESCRITORIO
-          // Solo si hay urgencia y si Arturo nos dio permiso en el navegador.
-          if (isThereUrgency && Notification.permission === "granted") {
-            new Notification("Tienes una tarea urgente", {
-              body: "Arturo, tienes objetivos que vencen pronto. ¡Échales un ojo!",
-              icon: "/logo192.png", // La imagen que sale en el aviso.
-            });
-          }
-          // Actualizamos nuestro interruptor visual.
-          setHasUrgency(isThereUrgency);
-        }
-
-        // 🟢 TRUCO PRO: Cambiamos el nombre de la pestaña del navegador.
-        // Verás un (!) al lado del nombre si tienes fuegos que apagar.
-        document.title = isThereUrgency
-          ? "(!) AI Business Manager"
-          : "AI Business Manager";
-      } catch (error) {
-        // Si algo falla (como que no haya internet), lo anotamos en la consola para saberlo.
-        console.error("Aviso: No se pudieron escanear urgencias en el menú.");
-      }
-    };
-
-    checkUrgentTasks();
-  }, [user, location.pathname]); // Se activa al cambiar de usuario o de página.
-
-  // 🚪 4. CERRAR SESIÓN
-  const handleLogout = () => {
-    logout();
-    toast.success("Sesión cerrada. ¡Vuelve pronto!");
-    navigate("/");
-  };
-
-  // 🌙 5. MODO OSCURO (Guardado en tu perfil)
-  const toggleDarkMode = async () => {
-    try {
-      const newStatus = !user.preferences.darkMode;
-      // Le decimos al servidor que Arturo ha cambiado de idea sobre el color.
-      const res = await api.put("/auth/profile", {
-        name: user.name,
-        preferences: { ...user.preferences, darkMode: newStatus },
-      });
-      // Actualizamos la web al instante con la respuesta del servidor.
-      updateUser(res.data);
-      toast.success(newStatus ? "Modo Oscuro 🌙" : "Modo Claro ☀️");
-    } catch (error) {
-      toast.error("Vaya, no se pudo cambiar el tema.");
-    }
-  };
+  // 👨‍🏫 Lógica Premium: Usamos prefijos numéricos para un look más técnico/militar.
+  const links = [
+    { id: "01", name: "Dashboard", path: "/dashboard", short: "DB" },
+    { id: "02", name: "Clientes", path: "/clientes", short: "CL" },
+    { id: "03", name: "Objetivos", path: "/tareas", short: "OBJ" },
+    { id: "04", name: "Finanzas", path: "/finanzas", short: "FIN" },
+    { id: "05", name: "Consultora IA", path: "/ia", short: "AI" },
+  ];
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 transition-colors duration-500">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* LOGO: Te lleva al inicio */}
-          <Link
-            to="/"
-            className="text-2xl font-black text-brand tracking-tighter"
-          >
-            AI Business
-          </Link>
-
-          <div className="flex items-center space-x-6">
-            {user ? (
-              <>
-                {/* BOTÓN SOL/LUNA */}
-                <button
-                  onClick={toggleDarkMode}
-                  className="p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all text-xl"
-                  title="Cambiar luz"
-                >
-                  {user.preferences?.darkMode ? "☀️" : "🌙"}
-                </button>
-
-                {/* ENLACES DE SECCIÓN */}
-                <Link
-                  to="/dashboard"
-                  className="text-gray-500 hover:text-brand font-medium text-sm"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/clientes"
-                  className="text-gray-500 hover:text-brand font-medium text-sm"
-                >
-                  Clientes
-                </Link>
-
-                {/* TAREAS CON PUNTO DE AVISO */}
-                <Link
-                  to="/tareas"
-                  className="text-gray-500 hover:text-brand font-medium text-sm flex items-center gap-2 relative"
-                >
-                  <span>Tareas</span>
-                  {/* Si el vigilante detectó urgencia, pintamos el punto rojo parpadeante */}
-                  {hasUrgency && (
-                    <span className="flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-red-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                    </span>
-                  )}
-                </Link>
-
-                <Link
-                  to="/finanzas"
-                  className="text-gray-500 hover:text-brand font-medium text-sm"
-                >
-                  Finanzas
-                </Link>
-
-                <Link
-                  to="/ia"
-                  className="text-gray-500 hover:text-brand font-medium text-sm"
-                >
-                  Consultora IA
-                </Link>
-
-                {/* BOTÓN SALIR */}
-                <button
-                  onClick={handleLogout}
-                  className="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold transition-all hover:bg-red-100"
-                >
-                  Salir
-                </button>
-
-                {/* AVATAR: Tu inicial con enlace a tu perfil */}
-                <Link
-                  to="/perfil"
-                  className="w-9 h-9 bg-brand text-white rounded-xl flex items-center justify-center font-black shadow-lg hover:scale-110 transition-all"
-                >
-                  {user.name?.charAt(0).toUpperCase()}
-                </Link>
-              </>
-            ) : (
-              <>
-                {/* Botones para invitados */}
-                <Link to="/login" className="text-gray-500 font-medium text-sm">
-                  Entrar
-                </Link>
-                <Link
-                  to="/register"
-                  className="bg-brand text-white px-6 py-2.5 rounded-xl font-bold text-sm"
-                >
-                  Pruébalo Gratis
-                </Link>
-              </>
-            )}
+    <div className="h-full glass border-r border-white/5 flex flex-col p-8 reveal-premium">
+      
+      {/* 🚀 LOGO SUPERIOR (Branding de Alta Tecnología) */}
+      <div className="mb-16">
+        <div className="flex items-center gap-4 group cursor-pointer">
+          <div className="w-12 h-12 bg-cyber-blue text-black rounded-2xl flex items-center justify-center shadow-[0_0_25px_rgba(0,209,255,0.4)] group-hover:scale-105 transition-all duration-700">
+             <span className="font-black text-2xl italic">A</span>
+          </div>
+          <div>
+            <h1 className="text-xl font-black tracking-tighter text-white italic leading-none">AI.MANAGER</h1>
+            <p className="text-[7px] text-cyber-blue font-black uppercase tracking-[0.5em] mt-1">Neural_Core_V4</p>
           </div>
         </div>
       </div>
-    </nav>
+
+      {/* 🔗 NAVEGACIÓN CENTRAL (Módulos Operativos) */}
+      <nav className="flex-grow space-y-4">
+        {links.map((link) => {
+          const isActive = location.pathname === link.path;
+          return (
+            <Link
+              key={link.path}
+              to={link.path}
+              onClick={closeMenu}
+              className={`
+                relative flex items-center gap-5 px-6 py-4 rounded-2xl transition-all duration-700 group
+                ${isActive 
+                  ? "bg-white/[0.03] text-white border border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.02)]" 
+                  : "text-cyber-silver/30 hover:text-white hover:bg-white/[0.02]"}
+              `}
+            >
+              {/* Indicador de sección activa (Línea lateral neón) */}
+              {isActive && (
+                <div className="absolute left-0 w-1 h-6 bg-cyber-blue rounded-r-full shadow-[0_0_15px_#00D1FF]"></div>
+              )}
+
+              {/* Sigla técnica en lugar de emoji */}
+              <span className={`text-[9px] font-black w-8 transition-colors duration-700 ${isActive ? 'text-cyber-blue' : 'text-white/10 group-hover:text-cyber-blue/40'}`}>
+                {link.short}
+              </span>
+
+              <span className="text-[10px] font-black uppercase tracking-[0.3em]">
+                {link.name}
+              </span>
+
+              {/* Número de serie discreto */}
+              <span className="ml-auto text-[7px] font-black opacity-10 group-hover:opacity-30 transition-opacity">
+                {link.id}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* 👤 SECCIÓN INFERIOR (Identidad y Seguridad) */}
+      <div className="mt-auto pt-10 border-t border-white/5 space-y-8">
+        <Link 
+            to="/perfil" 
+            onClick={closeMenu}
+            className="flex items-center gap-5 group p-2 rounded-2xl hover:bg-white/[0.02] transition-all duration-700"
+        >
+            <div className="relative">
+                <div className="w-11 h-11 rounded-2xl border border-white/10 p-1 group-hover:border-cyber-blue transition-all duration-700 overflow-hidden">
+                    <div className="w-full h-full bg-cyber-blue/10 rounded-xl flex items-center justify-center text-cyber-blue font-black text-lg italic">
+                        {user?.name?.charAt(0)}
+                    </div>
+                </div>
+                {/* Punto de estado online */}
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyber-blue rounded-full border-4 border-cyber-black animate-pulse"></div>
+            </div>
+            
+            <div className="flex flex-col">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest">{user?.name}</span>
+                <span className="text-[7px] text-cyber-blue font-black uppercase tracking-[0.3em] opacity-40 group-hover:opacity-100 transition-opacity">Config_User</span>
+            </div>
+        </Link>
+
+        <button 
+            onClick={logout}
+            className="w-full py-4 rounded-xl border border-red-500/10 text-red-500/40 text-[9px] font-black uppercase tracking-[0.3em] hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30 transition-all duration-700"
+        >
+            Desconectar_Sistema
+        </button>
+      </div>
+    </div>
   );
 };
 

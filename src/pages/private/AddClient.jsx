@@ -1,141 +1,156 @@
+// -------------------------------------------------------------------------
+// 📂 ARCHIVO: src/pages/private/AddClient.jsx
+// 📝 DESCRIPCIÓN: Registro de activos con integración financiera directa.
+// -------------------------------------------------------------------------
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios'; 
 import { toast } from 'react-hot-toast';
 
 const AddClient = () => {
-    // 1. CAJA DE MEMORIA (Estado)
-    // Añadimos companyName, phone y el objeto technicalSheet para las notas
+    // 🧠 MEMORIA ACTUALIZADA (Añadimos budget y cost)
     const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        companyName: '',
-        phone: '',
+        name: '', 
+        email: '', 
+        companyName: '', 
+        phone: '', 
         category: 'General',
-        technicalSheet: {
-            notes: ''
-        }
+        // 🟢 NUEVO: Parámetros económicos iniciales
+        budget: 0,
+        cost: 0,
+        technicalSheet: { notes: '' }
     });
-    
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // 2. FUNCIÓN DE ENVÍO
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
+            // 👨‍🏫 Enviamos el paquete completo con los datos de dinero al servidor
             await api.post('/clients', formData);
-            
-            toast.success('¡Cliente guardado correctamente!', {
-                duration: 4000,
-                style: { borderRadius: '15px', background: '#333', color: '#fff' }
+            toast.success('Activo y capital registrados', {
+                style: { background: '#030303', color: '#00D1FF', border: '1px solid rgba(0,209,255,0.2)' }
             });
-            
             navigate('/clientes');
-        } catch (error) {
-            toast.error('No se pudo guardar. Revisa la conexión.');
-        } finally {
-            setLoading(false);
+        } catch (error) { 
+            toast.error('Fallo en la sincronización del activo.'); 
+        } finally { 
+            setLoading(false); 
         }
     };
 
     return (
-        <div className="p-8 max-w-2xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">Añadir Nuevo Cliente</h1>
+        <div className="max-w-4xl mx-auto space-y-12 reveal-premium pb-20">
             
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            {/* --- CABECERA (Identidad de Registro) --- */}
+            <header className="space-y-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-[2px] bg-cyber-blue opacity-50"></div>
+                    <span className="text-[9px] font-black text-cyber-blue uppercase tracking-[0.4em]">New_Asset_Registration</span>
+                </div>
+                <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter italic">
+                    Nuevo <span className="text-cyber-blue">Cliente</span>
+                </h1>
+                <p className="text-cyber-silver/40 font-medium italic text-lg max-w-xl">
+                    Inicia el protocolo de alta para nuevos socios estratégicos y flujos de capital.
+                </p>
+            </header>
+
+            <form onSubmit={handleSubmit} className="glass p-12 border-white/5 space-y-12">
                 
-                {/* FILA 1: Nombre */}
-                <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre Completo</label>
-                    <input
-                        type="text"
-                        required
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                        placeholder="Ej: Juan Pérez"
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    />
-                </div>
-
-                {/* FILA 2: Email */}
-                <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Correo Electrónico</label>
-                    <input
-                        type="email"
-                        required
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                        placeholder="juan@empresa.com"
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    />
-                </div>
-
-                {/* FILA 3: Empresa y Teléfono (En dos columnas) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Empresa (Opcional)</label>
-                        <input
-                            type="text"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                            placeholder="Ej: Tech Solutions"
-                            onChange={(e) => setFormData({...formData, companyName: e.target.value})}
-                        />
+                {/* 📋 BLOQUE 1: IDENTIFICACIÓN */}
+                <div className="space-y-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div className="group">
+                            <label className="block text-[8px] font-black text-white/20 uppercase mb-4 tracking-[0.4em] ml-1">Nombre_Legal</label>
+                            <input 
+                                type="text" 
+                                required 
+                                placeholder="Ej: Operador Alfa" 
+                                className="w-full bg-white/[0.02] border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-cyber-blue/30 transition-all font-bold" 
+                                onChange={(e) => setFormData({...formData, name: e.target.value})} 
+                            />
+                        </div>
+                        <div className="group">
+                            <label className="block text-[8px] font-black text-white/20 uppercase mb-4 tracking-[0.4em] ml-1">Enlace_Comunicación</label>
+                            <input 
+                                type="email" 
+                                required 
+                                placeholder="identidad@red.com" 
+                                className="w-full bg-white/[0.02] border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-cyber-blue/30 transition-all font-bold" 
+                                onChange={(e) => setFormData({...formData, email: e.target.value})} 
+                            />
+                        </div>
                     </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Teléfono (Opcional)</label>
-                        <input
-                            type="tel"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                            placeholder="+34 600 000 000"
-                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div className="group">
+                            <label className="block text-[8px] font-black text-white/20 uppercase mb-4 tracking-[0.4em] ml-1">Corporación_ID</label>
+                            <input 
+                                type="text" 
+                                className="w-full bg-white/[0.02] border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-cyber-blue/30 transition-all font-medium" 
+                                onChange={(e) => setFormData({...formData, companyName: e.target.value})} 
+                            />
+                        </div>
+                        <div className="group">
+                            <label className="block text-[8px] font-black text-white/20 uppercase mb-4 tracking-[0.4em] ml-1">Nivel_Prioridad</label>
+                            <select 
+                                className="w-full bg-white/[0.02] border border-white/5 p-5 rounded-2xl text-white font-bold outline-none cursor-pointer focus:border-cyber-blue/30 transition-all" 
+                                onChange={(e) => setFormData({...formData, category: e.target.value})}
+                            >
+                                <option value="General">Registro_General</option>
+                                <option value="VIP">Prioridad_VIP</option>
+                                <option value="Potencial">Lead_Potencial</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                {/* FILA 4: Categoría */}
-                <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
-                    <select 
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                        onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    >
-                        <option value="General">General</option>
-                        <option value="VIP">VIP</option>
-                        <option value="Potencial">Potencial</option>
-                    </select>
+                {/* 💰 BLOQUE 2: INTELIGENCIA FINANCIERA (La nueva sección)
+                    Lógica: Usamos un panel diferenciado para marcar la importancia del dinero. */}
+                <div className="glass bg-cyber-blue/[0.01] p-10 border-cyber-blue/10 rounded-[40px] space-y-10 relative overflow-hidden">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-cyber-blue rounded-full animate-ping"></div>
+                        <p className="text-[9px] font-black text-cyber-blue uppercase tracking-[0.3em]">Capital_Inicial_Vincualdo</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div className="space-y-3">
+                            <label className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] ml-2">Presupuesto_In</label>
+                            <div className="relative">
+                                <input 
+                                    type="number" 
+                                    placeholder="0.00" 
+                                    className="w-full bg-black/40 border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-cyber-blue/40 font-black text-2xl tracking-tighter transition-all" 
+                                    onChange={(e) => setFormData({...formData, budget: Number(e.target.value)})} 
+                                />
+                                <span className="absolute right-6 top-1/2 -translate-y-1/2 font-black text-cyber-blue/20">€</span>
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            <label className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] ml-2">Coste_Operativo</label>
+                            <div className="relative">
+                                <input 
+                                    type="number" 
+                                    placeholder="0.00" 
+                                    className="w-full bg-black/40 border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-red-500/40 font-black text-2xl tracking-tighter transition-all" 
+                                    onChange={(e) => setFormData({...formData, cost: Number(e.target.value)})} 
+                                />
+                                <span className="absolute right-6 top-1/2 -translate-y-1/2 font-black text-red-500/20">€</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* FILA 5: Notas (Comentarios) */}
-                <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Notas sobre el cliente</label>
-                    <textarea
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all h-24"
-                        placeholder="Escribe aquí datos importantes para que la IA los analice..."
-                        onChange={(e) => setFormData({
-                            ...formData, 
-                            technicalSheet: { ...formData.technicalSheet, notes: e.target.value } 
-                        })}
-                    />
-                </div>
-
-                {/* BOTONES DE ACCIÓN */}
-                <div className="flex gap-4 pt-4">
-                    <button
-                        type="button"
-                        onClick={() => navigate('/clientes')}
-                        className="flex-1 bg-gray-100 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all"
-                    >
-                        {loading ? 'Guardando...' : 'Guardar Cliente'}
-                    </button>
-                </div>
-
+                {/* 🚀 ACCIÓN FINAL */}
+                <button 
+                    type="submit" 
+                    disabled={loading} 
+                    className="w-full bg-cyber-blue text-black py-6 rounded-3xl font-black uppercase text-[11px] tracking-[0.4em] shadow-[0_20px_40px_-10px_rgba(0,209,255,0.4)] hover:scale-[1.01] active:scale-[0.99] transition-all duration-700"
+                >
+                    {loading ? 'Sincronizando...' : 'Ejecutar Registro de Activo'}
+                </button>
             </form>
         </div>
     );

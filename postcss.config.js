@@ -1,7 +1,9 @@
+// postcss.config.js
 export default {
   plugins: {
-    // Aquí es donde cambiamos 'tailwindcss' por el nuevo nombre con el adaptador
-    '@tailwindcss/postcss': {}, 
-    autoprefixer: {},
+    // Usamos el conector oficial de la versión 4
+    "@tailwindcss/postcss": {}, 
+    // Añade prefijos para que se vea bien en todos los navegadores (Safari, Chrome, etc.)
+    "autoprefixer": {},
   },
 }

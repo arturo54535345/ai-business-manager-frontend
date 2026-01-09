@@ -1,5 +1,6 @@
 // -------------------------------------------------------------------------
-// 🛠️ SECCIÓN 1: HERRAMIENTAS
+// 📂 ARCHIVO: src/pages/private/AddTask.jsx
+// 📝 DESCRIPCIÓN: Consola de despliegue de nuevos objetivos operativos.
 // -------------------------------------------------------------------------
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,190 +10,197 @@ import { toast } from "react-hot-toast";
 const AddTask = () => {
   const navigate = useNavigate();
 
-  // -------------------------------------------------------------------------
-  // 🧠 SECCIÓN 2: LA MEMORIA (Estado del formulario)
-  // -------------------------------------------------------------------------
+  // 🧠 MEMORIA (INTACTA)
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    specifications: "",
-    client: "",
-    priority: "medium",
-    category: "Otro",
-    dueDate: "",
-    // 🟢 NUEVOS CAMPOS: El dinero de la tarea
-    budget: 0, // Lo que vas a cobrar por esto.
-    cost: 0    // Lo que vas a gastar para hacer esto.
+    title: "", description: "", specifications: "", client: "",
+    priority: "medium", category: "Otro", dueDate: "",
+    budget: 0, cost: 0
   });
 
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 📡 MISIÓN: Traer los clientes al empezar
+  // 📡 CARGA DE ACTIVOS
   useEffect(() => {
     const fetchClients = async () => {
       try {
         const res = await api.get("/clients");
         setClients(res.data.clients || res.data);
       } catch (error) {
-        toast.error("Error al cargar clientes.");
+        toast.error("Error en el enlace de red.");
       }
     };
     fetchClients();
   }, []);
 
-  // 🚀 EL ENVÍO: Guardar la tarea en el servidor
+  // 🚀 PROTOCOLO DE ENVÍO
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.client) return toast.error("Arturo, selecciona un cliente.");
+    if (!formData.client) return toast.error("Arturo, asigna un activo (cliente).");
 
     setLoading(true);
     try {
-      // 👨‍🏫 Enviamos todo el sobre con los nuevos campos de dinero incluidos.
       await api.post("/tasks", formData);
-      toast.success("¡Tarea y finanzas registradas!", { icon: "💰" });
+      toast.success("Misión inyectada al sistema", {
+        style: { background: '#030303', color: '#00D1FF', border: '1px solid rgba(0,209,255,0.1)' }
+      });
       navigate("/tareas");
     } catch (error) {
-      toast.error("Error al guardar. Revisa el servidor.");
+      toast.error("Fallo en la escritura de datos.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto animate-fade-in">
-      <h1 className="text-3xl font-black text-gray-900 mb-6 tracking-tight">
-        Nueva Tarea
-      </h1>
+    // 🌌 ESCENARIO DE CREACIÓN
+    <div className="max-w-4xl mx-auto space-y-12 reveal-premium pb-20">
+      
+      {/* --- CABECERA TÉCNICA --- */}
+      <header className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-[2px] bg-cyber-blue opacity-50"></div>
+          <span className="text-[9px] font-black text-cyber-blue uppercase tracking-[0.4em]">New_Mission_Protocol</span>
+        </div>
+        <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter italic">
+          Nueva <span className="text-cyber-blue">Tarea</span>
+        </h1>
+        <p className="text-cyber-silver/40 font-medium italic text-lg max-w-xl">
+          Configura los parámetros tácticos y financieros del nuevo objetivo operativo.
+        </p>
+      </header>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100 space-y-6"
-      >
-        {/* --- DATOS BÁSICOS (Título y Desc) --- */}
-        <div>
-          <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">¿Qué hay que hacer?</label>
+      {/* --- CONSOLA DE DATOS (Panel de Cristal) --- */}
+      <form onSubmit={handleSubmit} className="glass p-12 md:p-16 border-white/5 space-y-12">
+        
+        {/* IDENTIFICADOR DE MISIÓN */}
+        <div className="group">
+          <label className="block text-[8px] font-black text-white/20 uppercase mb-4 ml-1 tracking-[0.4em] group-focus-within:text-cyber-blue transition-colors duration-500">
+            Título_de_la_Operación
+          </label>
           <input
             type="text"
             required
-            className="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium"
-            placeholder="Ej: Organización de evento VIP"
+            placeholder="Ej: Protocolo de Expansión VIP..."
+            className="w-full bg-white/[0.02] border border-white/5 p-6 rounded-2xl text-white outline-none focus:border-cyber-blue/30 focus:bg-white/[0.05] transition-all duration-700 font-bold text-xl placeholder:text-white/5"
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           />
         </div>
 
-        {/* --- 🟢 SECCIÓN NUEVA: ECONOMÍA DE LA TAREA --- */}
-        <div className="bg-gray-50 p-6 rounded-[30px] border border-gray-100 space-y-4">
-          <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">💰 Inteligencia Financiera</p>
+        {/* 💰 MÓDULO DE INTELIGENCIA FINANCIERA
+            Lógica: Usamos un fondo levemente azulado para indicar que aquí se mueve dinero. */}
+        <div className="glass bg-cyber-blue/[0.01] p-10 border-cyber-blue/10 rounded-[40px] space-y-10 relative overflow-hidden">
+          <div className="flex items-center gap-3">
+             <div className="w-2 h-2 bg-cyber-blue rounded-full animate-ping"></div>
+             <p className="text-[9px] font-black text-cyber-blue uppercase tracking-[0.3em]">Cálculo_Financiero_Proyectado</p>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Campo Presupuesto */}
-            <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 ml-1">Presupuesto (Ingreso)</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {/* Presupuesto */}
+            <div className="space-y-3">
+              <label className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] ml-2">Presupuesto_In (Recibo)</label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-400">€</span>
                 <input
                   type="number"
-                  className="w-full pl-10 pr-5 py-4 rounded-xl border border-white focus:ring-4 focus:ring-green-50 outline-none transition-all font-bold text-gray-700 shadow-sm"
                   placeholder="0.00"
-                  // 👨‍🏫 Lógica: Convertimos el texto a número para que el servidor no se queje.
+                  className="w-full bg-black/40 border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-cyber-blue/40 font-black text-2xl tracking-tighter transition-all"
                   onChange={(e) => setFormData({ ...formData, budget: Number(e.target.value) })}
                 />
+                <span className="absolute right-6 top-1/2 -translate-y-1/2 font-black text-cyber-blue/20">€</span>
               </div>
             </div>
 
-            {/* Campo Coste */}
-            <div>
-              <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 ml-1">Coste (Gasto)</label>
+            {/* Coste */}
+            <div className="space-y-3">
+              <label className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] ml-2">Coste_Out (Inversión)</label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-400">€</span>
                 <input
                   type="number"
-                  className="w-full pl-10 pr-5 py-4 rounded-xl border border-white focus:ring-4 focus:ring-red-50 outline-none transition-all font-bold text-gray-700 shadow-sm"
                   placeholder="0.00"
+                  className="w-full bg-black/40 border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-red-500/40 font-black text-2xl tracking-tighter transition-all"
                   onChange={(e) => setFormData({ ...formData, cost: Number(e.target.value) })}
                 />
+                <span className="absolute right-6 top-1/2 -translate-y-1/2 font-black text-red-500/20">€</span>
               </div>
             </div>
           </div>
-          <p className="text-[9px] text-gray-400 italic px-2">
-            * El beneficio se calculará automáticamente en tu Dashboard al completar la tarea.
+          <p className="text-[8px] text-cyber-silver/20 uppercase tracking-widest italic px-2">
+            * El margen neto se sincronizará automáticamente en el centro financiero.
           </p>
         </div>
 
-        {/* --- CLIENTE Y CATEGORÍA --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Cliente</label>
+        {/* ASIGNACIÓN Y SECTOR */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="space-y-3">
+            <label className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] ml-2">Activo_Asociado (Cliente)</label>
             <select
               required
-              className="w-full px-5 py-4 rounded-2xl border border-gray-100 outline-none bg-white font-bold text-gray-700"
+              className="w-full bg-white/[0.02] border border-white/5 p-6 rounded-2xl text-white font-bold outline-none cursor-pointer focus:border-cyber-blue/30 transition-all duration-700"
               onChange={(e) => setFormData({ ...formData, client: e.target.value })}
             >
-              <option value="">Selecciona...</option>
+              <option value="">Seleccionar_ID_Cliente</option>
               {clients.map((c) => (
                 <option key={c._id} value={c._id}>{c.name}</option>
               ))}
             </select>
           </div>
 
-          <div>
-            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Tipo de Tarea</label>
+          <div className="space-y-3">
+            <label className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] ml-2">Tipo_de_Operación</label>
             <select
-              className="w-full px-5 py-4 rounded-2xl border border-gray-100 outline-none bg-white font-bold text-gray-700"
+              className="w-full bg-white/[0.02] border border-white/5 p-6 rounded-2xl text-white font-bold outline-none cursor-pointer focus:border-cyber-blue/30 transition-all duration-700"
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             >
-              <option value="Otro">Otro</option>
-              <option value="Llamada">📞 Llamada</option>
-              <option value="Reunión">🤝 Reunión</option>
-              <option value="Email">📧 Email</option>
-              <option value="Administración">📄 Administración</option>
-              <option value="Catering">🍽️ Catering</option>
+              <option value="Otro">General</option>
+              <option value="Llamada">Llamada</option>
+              <option value="Reunión">Reunión</option>
+              <option value="Email">Email</option>
+              <option value="Catering">Catering</option>
             </select>
           </div>
         </div>
 
-        {/* --- PRIORIDAD Y FECHA --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Prioridad</label>
+        {/* PRIORIDAD Y TIEMPO */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="space-y-3">
+            <label className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] ml-2">Nivel_de_Urgencia</label>
             <select
-              className="w-full px-5 py-4 rounded-2xl border border-gray-100 outline-none bg-white font-bold text-gray-700"
+              className="w-full bg-white/[0.02] border border-white/5 p-6 rounded-2xl text-white font-bold outline-none cursor-pointer focus:border-cyber-blue/30 transition-all duration-700"
               value={formData.priority}
               onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
             >
-              <option value="low">🟢 Baja</option>
-              <option value="medium">🟡 Media</option>
-              <option value="high">🔴 Alta</option>
+              <option value="low">Prioridad Baja</option>
+              <option value="medium">Media (Estandar)</option>
+              <option value="high">Crítica (Prioridad Alfa)</option>
             </select>
           </div>
-          <div>
-            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Fecha Límite</label>
+          <div className="space-y-3">
+            <label className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] ml-2">Timeline_Due_Date</label>
             <input
               type="date"
               required
-              className="w-full px-5 py-4 rounded-2xl border border-gray-100 outline-none font-bold text-gray-700"
+              className="w-full bg-white/[0.02] border border-white/5 p-6 rounded-2xl text-white font-bold outline-none focus:border-cyber-blue/30 transition-all duration-700"
               onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
             />
           </div>
         </div>
 
-        {/* BOTONES */}
-        <div className="flex gap-4 pt-6">
+        {/* BOTONES DE ACCIÓN FINAL */}
+        <div className="flex flex-col md:flex-row gap-6 pt-10">
           <button
             type="button"
             onClick={() => navigate("/tareas")}
-            className="flex-1 bg-gray-50 text-gray-400 py-4 rounded-[20px] font-black hover:bg-gray-100 transition-all uppercase text-[10px] tracking-widest"
+            className="flex-1 glass bg-white/[0.03] text-cyber-silver/40 py-6 rounded-2xl font-black uppercase text-[10px] tracking-[0.4em] hover:text-white transition-all duration-700"
           >
-            Cancelar
+            Abortar_Protocolo
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white py-4 rounded-[20px] font-black hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all uppercase text-[10px] tracking-widest disabled:opacity-50"
+            className="flex-1 bg-cyber-blue text-black py-6 rounded-2xl font-black uppercase text-[10px] tracking-[0.4em] shadow-[0_20px_40px_-10px_rgba(0,209,255,0.4)] hover:scale-[1.02] transition-all duration-700"
           >
-            {loading ? "Guardando..." : "Crear Tarea"}
+            {loading ? "Sincronizando..." : "Ejecutar_Despliegue"}
           </button>
         </div>
       </form>

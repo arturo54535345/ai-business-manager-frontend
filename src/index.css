@@ -1,90 +1,99 @@
 @import "tailwindcss";
 
-/* 1. TEMAS DE COLOR (Variables que cambian) */
-.theme-blue {
-  --brand: #2563eb;
-  --brand-light: #dbeafe;
-}
-.theme-red {
-  --brand: #e11d48;
-  --brand-light: #ffe4e6;
-}
-.theme-green {
-  --brand: #059669;
-  --brand-light: #d1fae5;
-}
-.theme-purple {
-  --brand: #7c3aed;
-  --brand-light: #ede9fe;
+@config "../tailwind.config.js";
+
+@theme {
+  --color-cyber-blue: #00D1FF;
+  --color-cyber-purple: #9D00FF;
 }
 
-/* 2. CLASES DINÁMICAS (Para usar en el código) */
-.bg-brand {
-  background-color: var(--brand);
-}
-.text-brand {
-  color: var(--brand);
-}
-.border-brand {
-  border-color: var(--brand);
-}
-.bg-brand-light {
-  background-color: var(--brand-light);
-}
-.text-brand-dark {
-  color: var(--brand);
-  filter: brightness(0.8);
+:root {
+  --bg-black: #030303;
+  --grid-color: rgba(0, 209, 255, 0.02);
 }
 
-/* Animación suave para que el cambio de color no sea brusco */
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease,
-    color 0.3s ease;
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-black);
+  color: white;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  
+  /* 🌌 FONDO DEGRADADO PREMIUM (Fijo y Sutil) */
+  background-image: 
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
+    radial-gradient(circle at 90% 10%, rgba(0, 209, 255, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 10% 90%, rgba(157, 0, 255, 0.04) 0%, transparent 40%);
+  background-size: 50px 50px, 50px 50px, 100% 100%, 100% 100%;
+  background-attachment: fixed;
+  min-height: 100vh; /* ✅ CORREGIDO: Nunca uses clases de Tailwind aquí */
+  overflow-x: hidden;
 }
 
-/* Animacion de las tareas*/
-@keyframes pulse-red {
-  0% {
-    bpx-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4);
+/* 💎 EFECTO CRISTAL (Glassmorphism) */
+.glass {
+  background: rgba(255, 255, 255, 0.01);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass::after {
+  content: "";
+  position: absolute;
+  top: -120%;
+  left: -120%;
+  width: 250%;
+  height: 250%;
+  background: linear-gradient(to bottom, transparent, rgba(0, 209, 255, 0.03), transparent);
+  transform: rotate(45deg);
+  animation: scan 10s infinite ease-in-out;
+  pointer-events: none;
+}
+
+/* ⚡ HOVER PREMIUM */
+.glass-hover {
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-hover:hover {
+  border-color: rgba(0, 209, 255, 0.3);
+  background: rgba(0, 209, 255, 0.02);
+  box-shadow: 0 0 40px rgba(0, 209, 255, 0.1);
+  transform: scale(1.02) translateY(-5px);
+}
+
+/* 🎬 COREOGRAFÍA DE ANIMACIONES */
+@keyframes scan {
+  0% { top: -120%; left: -120%; }
+  100% { top: 120%; left: 120%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float-slow {
+  animation: float 12s ease-in-out infinite;
+}
+
+.reveal-premium {
+  opacity: 0;
+  filter: blur(15px);
+  transform: translateY(30px);
+  animation: revealBlur 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes revealBlur {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
   }
-  70% {
-    box-shadow: 0 0 0 15px rgba(225, 29, 72, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0);
-  }
-}
-.border-urgent {
-  border: 2px solid #e11d48 !important;
-  animation: pulse-red 2s infinte;
-}
-
-.dark {
-  --bg-main: #0f172a;
-  --bg-card: #1e293b;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-}
-
-.dark body {
-  background-color: var(--bg-main);
-  color: var(--text-main);
-}
-
-.dark .bg-white {
-  background-color: var(--bg-card) !important;
-  border-color: #334155 !important;
-  color: var(--text-main) !important;
-}
-
-.dark .text-gray-900 {
-  color: #f8fafc !important;
-}
-.dark .text-gray-500 {
-  color: #94a3b8 !important;
-}
-
-.border-urgent {
-  border: 2px solid #e11d48 !important;
-  animation: pulse-red 2s infinite;
 }

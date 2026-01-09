@@ -1,3 +1,6 @@
+// -------------------------------------------------------------------------
+// 🛠️ SECCIÓN 1: IMPORTACIONES Y HERRAMIENTAS
+// -------------------------------------------------------------------------
 import { useState, useEffect, useRef } from 'react';
 import api from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
@@ -11,12 +14,14 @@ const AIConsultancy = () => {
     
     const scrollRef = useRef(null);
 
+    // 👨‍🏫 Lógica: El scroll baja automáticamente cuando hay mensajes nuevos
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [messages]);
 
+    // 🚀 ENVÍO DE DATOS AL CEREBRO IA
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!prompt.trim()) return;
@@ -28,65 +33,103 @@ const AIConsultancy = () => {
         setPrompt(''); 
 
         try {
-            // 🟢 Enviamos la pregunta a la ruta de consultoría
             const res = await api.post('/ai/advice', { prompt: currentPrompt });
-            
-            // Accedemos a aiAdvice que es como lo definimos en el ai.controller.js
             const aiMsg = { role: 'ai', text: res.data.aiAdvice };
             setMessages((prev) => [...prev, aiMsg]);
         } catch (error) {
-            toast.error("Error de conexión.");
-            setMessages((prev) => [...prev, { role: 'ai', text: "No he podido procesar los datos ahora." }]);
+            toast.error("Fallo en el enlace neural.");
+            setMessages((prev) => [...prev, { role: 'ai', text: "Error de conexión con el núcleo central." }]);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="p-8 max-w-5xl mx-auto h-[calc(100vh-120px)] flex flex-col">
-            <header className="mb-6">
-                <h1 className="text-4xl font-black text-gray-900">Consultoría Estratégica</h1>
-                <p className="text-gray-500">Modo: <span className="font-bold text-blue-600 uppercase">{user?.preferences?.aiTone || 'Socio'}</span></p>
+        // 👨‍🏫 Lógica: Ajustamos el alto para que el chat ocupe casi toda la pantalla
+        <div className="h-[calc(100vh-140px)] flex flex-col space-y-8 animate-reveal">
+            
+            {/* --- CABECERA (Status de Conexión) --- */}
+            <header className="flex justify-between items-end">
+                <div>
+                    <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic">
+                        Neural <span className="text-cyber-purple">Link</span>
+                    </h1>
+                    <p className="text-cyber-silver text-[10px] font-black uppercase tracking-[0.3em] mt-2">
+                        Operador: <span className="text-cyber-purple">{user?.preferences?.aiTone || 'Estratega'}</span>
+                    </p>
+                </div>
+                <div className="flex items-center gap-2 text-[9px] font-black text-cyber-blue animate-pulse">
+                    <div className="w-2 h-2 bg-cyber-blue rounded-full"></div>
+                    SISTEMA EN LINEA
+                </div>
             </header>
 
-            <div ref={scrollRef} className="flex-grow overflow-y-auto bg-white rounded-[40px] shadow-sm border border-gray-100 p-6 mb-6 space-y-4">
+            {/* --- VENTANA DE TRANSMISIÓN (Chat) --- */}
+            <div 
+                ref={scrollRef} 
+                className="flex-grow overflow-y-auto glass p-8 space-y-6 border-white/5 scrollbar-hide"
+            >
+                {/* Pantalla de inicio si no hay mensajes */}
                 {messages.length === 0 && (
-                    <div className="h-full flex flex-col items-center justify-center text-center">
-                        <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl animate-bounce mb-4">🤖</div>
-                        <p className="text-gray-400">Hola {user?.name}, ¿cómo va tu negocio hoy?</p>
+                    <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
+                        <div className="w-20 h-20 bg-cyber-purple/10 rounded-3xl border border-cyber-purple/20 flex items-center justify-center text-4xl mb-6 shadow-[0_0_30px_rgba(157,0,255,0.1)]">
+                            🤖
+                        </div>
+                        <p className="text-cyber-silver font-bold uppercase text-[10px] tracking-widest">
+                            Esperando consulta estratégica de {user?.name}...
+                        </p>
                     </div>
                 )}
 
+                {/* MAPEADO DE MENSAJES */}
                 {messages.map((m, index) => (
-                    <div key={index} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[80%] p-5 rounded-[28px] ${m.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-100 text-gray-800 rounded-bl-none'}`}>
+                    <div key={index} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-reveal`}>
+                        <div className={`
+                            max-w-[80%] p-6 rounded-[30px] shadow-2xl relative
+                            ${m.role === 'user' 
+                                ? 'bg-cyber-blue text-black font-bold rounded-br-none' 
+                                : 'glass bg-white/5 text-gray-200 rounded-bl-none border-white/10'}
+                        `}>
+                            {/* Etiqueta de quién habla */}
+                            <span className={`text-[8px] font-black uppercase tracking-widest absolute -top-5 ${m.role === 'user' ? 'right-2 text-cyber-blue' : 'left-2 text-cyber-purple'}`}>
+                                {m.role === 'user' ? 'Arturo_Request' : 'AI_Response'}
+                            </span>
                             <p className="text-sm leading-relaxed whitespace-pre-line">{m.text}</p>
                         </div>
                     </div>
                 ))}
 
+                {/* EFECTO "PENSANDO" */}
                 {loading && (
-                    <div className="flex justify-start">
-                        <div className="bg-gray-50 p-4 rounded-[20px] rounded-bl-none flex items-center gap-3">
-                            <div className="flex gap-1">
-                                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="flex justify-start animate-reveal">
+                        <div className="glass bg-white/5 p-6 rounded-[25px] rounded-bl-none border-white/10 flex items-center gap-4">
+                            <div className="flex gap-1.5">
+                                <div className="w-1.5 h-1.5 bg-cyber-purple rounded-full animate-bounce"></div>
+                                <div className="w-1.5 h-1.5 bg-cyber-purple rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+                                <div className="w-1.5 h-1.5 bg-cyber-purple rounded-full animate-bounce [animation-delay:-0.4s]"></div>
                             </div>
-                            <span className="text-xs font-bold text-blue-400 uppercase">Pensando...</span>
+                            <span className="text-[10px] font-black text-cyber-purple uppercase tracking-widest">Analizando Variables...</span>
                         </div>
                     </div>
                 )}
             </div>
 
+            {/* --- TERMINAL DE ENTRADA (Input) --- */}
             <form onSubmit={handleSendMessage} className="relative group">
                 <input 
                     type="text"
-                    placeholder="Escribe tu consulta aquí..."
-                    className="w-full p-6 pr-20 rounded-[30px] border border-gray-100 shadow-xl focus:ring-4 focus:ring-blue-50 outline-none transition-all"
+                    placeholder="Escribir comando estratégico..."
+                    className="w-full glass bg-white/5 p-6 pr-24 text-white outline-none focus:border-cyber-blue transition-all font-medium border-white/10 shadow-2xl"
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                 />
-                <button type="submit" disabled={loading} className="absolute right-3 top-3 bottom-3 px-6 bg-blue-600 text-white rounded-[22px] font-bold">🚀</button>
+                <button 
+                    type="submit" 
+                    disabled={loading} 
+                    className="absolute right-4 top-4 bottom-4 px-8 bg-cyber-blue text-black rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg hover:scale-105 transition-all disabled:opacity-30"
+                >
+                    Enviar
+                </button>
             </form>
         </div>
     );

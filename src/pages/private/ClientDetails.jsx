@@ -1,177 +1,180 @@
+// -------------------------------------------------------------------------
+// 📂 ARCHIVO: src/pages/private/ClientDetails.jsx
+// 📝 DESCRIPCIÓN: Expediente detallado de activo con visualización táctica.
+// -------------------------------------------------------------------------
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from '../../api/axios';
 import { toast } from 'react-hot-toast';
 
 const ClientDetails = () => {
-    // -------------------------------------------------------------------------
-    // 🧠 SECCIÓN 1: HERRAMIENTAS Y MEMORIA
-    // -------------------------------------------------------------------------
-    
-    // 👨‍🏫 useParams es como un radar: busca en la barra de direcciones el ID del cliente.
+    // 🧠 LÓGICA (INTACTA)
     const { id } = useParams(); 
-    
-    // 👨‍🏫 useNavigate es nuestro mando a distancia para saltar entre páginas.
     const navigate = useNavigate();
-
-    // 👨‍🏫 Aquí guardamos toda la información del cliente y sus tareas.
     const [data, setData] = useState(null); 
-    
-    // 👨‍🏫 El interruptor que muestra "Cargando..." mientras buscamos en los archivos.
     const [loading, setLoading] = useState(true);
 
-    // -------------------------------------------------------------------------
-    // 📡 SECCIÓN 2: BUSCAR EL EXPEDIENTE (useEffect)
-    // -------------------------------------------------------------------------
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                // Le pedimos al servidor el expediente completo usando el ID del radar.
                 const res = await api.get(`/clients/${id}`);
                 setData(res.data);
             } catch (error) {
-                console.error("Error al buscar detalles", error);
                 toast.error("No se pudo cargar el expediente.");
-                navigate('/clientes'); // Si hay error, volvemos a la lista general.
+                navigate('/clientes');
             } finally {
-                setLoading(false); // Apagamos el mensaje de carga.
+                setLoading(false);
             }
         };
         fetchDetails();
-        // 👨‍🏫 Lógica: Esta función se activa una sola vez al entrar en la página.
     }, [id, navigate]);
 
-    // -------------------------------------------------------------------------
-    // 🗑️ SECCIÓN 3: LA PAPELERA (handleDelete)
-    // -------------------------------------------------------------------------
     const handleDelete = async () => {
-        if (window.confirm(`¿Seguro que quieres eliminar a ${data.client.name}?`)) {
+        if (window.confirm(`¿Confirmar eliminación definitiva de ${data.client.name}?`)) {
             try {
                 await api.delete(`/clients/${id}`);
-                toast.success("Cliente eliminado correctamente");
+                toast.success("Registro de activo borrado");
                 navigate('/clientes'); 
             } catch (error) {
-                toast.error("No se pudo eliminar el cliente.");
+                toast.error("Fallo en el protocolo de borrado.");
             }
         }
     };
 
-    // Si la web aún está buscando los datos, mostramos este mensaje.
-    if (loading) return <div className="p-10 text-center font-bold text-gray-500 animate-pulse">Cargando expediente...</div>;
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center font-black text-cyber-blue animate-pulse uppercase tracking-[0.5em] text-[10px]">
+            Sincronizando Expediente de Activo...
+        </div>
+    );
     
-    // Si por algún motivo no hay datos, avisamos.
-    if (!data) return <div className="p-10 text-center">No se encontró la información.</div>;
+    if (!data) return null;
 
-    // 👨‍🏫 Sacamos el 'client' y las 'tasks' de nuestro paquete de datos para usarlos fácil.
     const { client, tasks } = data;
 
     return (
-        <div className="p-8 max-w-6xl mx-auto animate-fade-in">
+        <div className="space-y-12 reveal-premium pb-20 max-w-7xl mx-auto">
             
-            {/* CABECERA: BOTONES DE NAVEGACIÓN */}
-            <div className="flex justify-between items-center mb-8">
+            {/* --- CABECERA TÁCTICA (Navegación y Alerta) --- */}
+            <div className="flex justify-between items-center glass p-6 border-white/5">
                 <button 
                     onClick={() => navigate('/clientes')}
-                    className="text-gray-500 hover:text-brand flex items-center gap-2 font-medium transition-colors"
+                    className="text-cyber-silver/40 hover:text-cyber-blue font-black text-[10px] uppercase tracking-[0.3em] flex items-center gap-4 transition-all duration-500 group"
                 >
-                    ← Volver a Clientes
+                    <span className="group-hover:-translate-x-2 transition-transform duration-500">←</span> Retornar al Directorio
                 </button>
 
                 <button 
                     onClick={handleDelete}
-                    className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-xl font-bold hover:bg-red-100 transition-all border border-red-100"
+                    className="bg-red-500/10 text-red-500 border border-red-500/20 px-6 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all duration-700"
                 >
-                    🗑️ Eliminar Cliente
+                    Eliminar Registro
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 
-                {/* 🏠 COLUMNA IZQUIERDA: IDENTIDAD Y CONTACTO */}
-                <div className="lg:col-span-1 space-y-6">
+                {/* --- 🏠 COLUMNA IZQUIERDA: IDENTIDAD (El Núcleo) --- */}
+                <div className="lg:col-span-1 space-y-10">
                     
-                    {/* Tarjeta de Identidad */}
-                    <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 text-center relative overflow-hidden">
-                        <div className="w-20 h-20 bg-brand text-white rounded-3xl flex items-center justify-center text-3xl font-black mx-auto mb-4 shadow-lg shadow-brand/20">
+                    {/* Tarjeta de Identidad Futurista */}
+                    <div className="glass p-12 text-center relative overflow-hidden group animate-float-slow">
+                        {/* Indicador de categoría neón */}
+                        <div className={`absolute top-0 left-0 w-full h-[2px] ${
+                            client.category === 'VIP' ? 'bg-cyber-purple shadow-[0_0_15px_#9D00FF]' : 'bg-cyber-blue opacity-30'
+                        }`}></div>
+
+                        <div className="w-24 h-24 bg-white/[0.03] border border-white/10 text-cyber-blue rounded-[30px] flex items-center justify-center text-4xl font-black mx-auto mb-8 group-hover:scale-105 transition-transform duration-1000">
                             {client.name.charAt(0)}
                         </div>
-                        <h1 className="text-2xl font-black text-gray-900">{client.name}</h1>
-                        <p className="text-brand font-bold text-sm mb-4">{client.companyName || 'Empresa no registrada'}</p>
-                        <span className="bg-gray-100 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
-                            {client.category}
+                        <h1 className="text-4xl font-black text-white tracking-tighter italic mb-2 leading-none">{client.name}</h1>
+                        <p className="text-cyber-blue text-[10px] font-black uppercase tracking-[0.3em] mb-8">{client.companyName || 'Corporación_Independiente'}</p>
+                        
+                        <span className={`px-5 py-2 rounded-full text-[8px] font-black uppercase tracking-[0.3em] border ${
+                            client.category === 'VIP' ? 'border-cyber-purple/40 text-cyber-purple bg-cyber-purple/5' : 'border-white/5 text-cyber-silver/40'
+                        }`}>
+                            Prioridad: {client.category}
                         </span>
                     </div>
 
-                    {/* Datos de Contacto */}
-                    <div className="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100">
-                        <h3 className="font-black text-gray-400 mb-4 text-[10px] uppercase tracking-[0.2em]">Contacto</h3>
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <span className="text-xl">📧</span>
-                                <p className="text-sm font-medium text-gray-700 truncate">{client.email}</p>
+                    {/* Datos de Comunicaciones */}
+                    <div className="glass p-10 space-y-8">
+                        <h3 className="font-black text-white/20 text-[8px] font-black uppercase tracking-[0.5em] mb-2">Terminal_Comms</h3>
+                        <div className="space-y-6">
+                            <div className="group">
+                                <p className="text-[7px] font-black text-cyber-blue/40 uppercase tracking-widest mb-1">Enlace_Email</p>
+                                <p className="text-sm font-bold text-cyber-silver/80 group-hover:text-white transition-colors truncate">{client.email}</p>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-xl">📞</span>
-                                <p className="text-sm font-medium text-gray-700">{client.phone || 'No disponible'}</p>
+                            <div className="group">
+                                <p className="text-[7px] font-black text-cyber-blue/40 uppercase tracking-widest mb-1">Enlace_Voz</p>
+                                <p className="text-sm font-bold text-cyber-silver/80 group-hover:text-white transition-colors">{client.phone || 'ID_NULL'}</p>
                             </div>
                         </div>
                     </div>
 
-                    {/* Notas Técnicas para la IA */}
-                    <div className="bg-gray-900 p-6 rounded-[24px] shadow-xl text-white">
-                        <h3 className="font-black text-brand mb-4 text-[10px] uppercase tracking-[0.2em]">Notas de Socio</h3>
-                        <p className="text-sm leading-relaxed opacity-80 italic">
-                            "{client.technicalSheet?.notes || 'No hay comentarios técnicos todavía.'}"
+                    {/* Notas del Socio (IA Context) */}
+                    <div className="glass p-10 border-cyber-purple/20 bg-cyber-purple/[0.02] relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 text-[7px] font-black text-cyber-purple uppercase tracking-[0.4em]">Neural_Note</div>
+                        <h3 className="font-black text-cyber-purple mb-6 text-[8px] uppercase tracking-[0.5em]">Análisis_de_Socio</h3>
+                        <p className="text-sm leading-relaxed text-cyber-silver/60 italic font-medium">
+                            "{client.technicalSheet?.notes || 'No se han registrado observaciones estratégicas para este activo.'}"
                         </p>
                     </div>
                 </div>
 
-                {/* 📝 COLUMNA DERECHA: LISTADO DE TAREAS INTERACTIVO */}
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="flex justify-between items-center">
-                        <h2 className="text-2xl font-black text-gray-900">Tareas Vinculadas</h2>
-                        <span className="bg-gray-100 text-gray-500 px-4 py-1.5 rounded-xl text-xs font-black">
-                            {tasks.length} EN TOTAL
+                {/* --- 📝 COLUMNA DERECHA: LOG DE OPERACIONES (Tareas) --- */}
+                <div className="lg:col-span-2 space-y-10">
+                    <div className="flex justify-between items-end px-4">
+                        <div className="space-y-2">
+                             <h2 className="text-4xl font-black text-white tracking-tighter italic">Misiones <span className="text-cyber-blue">Vinculadas</span></h2>
+                             <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Registro de objetivos operativos</p>
+                        </div>
+                        <span className="glass bg-white/5 px-4 py-2 rounded-xl text-[9px] font-black text-cyber-blue border border-cyber-blue/20 uppercase">
+                            {tasks.length} REGISTROS
                         </span>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         {tasks.length === 0 ? (
-                            <div className="bg-white p-12 rounded-[32px] border-2 border-dashed border-gray-100 text-center">
-                                <p className="text-gray-400 font-medium italic">No hay tareas pendientes con este cliente.</p>
+                            <div className="glass p-20 border-dashed border-white/5 text-center">
+                                <p className="text-cyber-silver/20 text-[10px] font-black uppercase tracking-[0.4em] italic">No se han detectado misiones activas para este activo.</p>
                             </div>
                         ) : (
-                            tasks.map(task => (
-                                // 🟢 LO NUEVO: Ahora cada tarea es clicable y te lleva a su edición
+                            tasks.map((task, index) => (
                                 <div 
                                     key={task._id} 
                                     onClick={() => navigate(`/tareas/${task._id}`)}
-                                    className={`group cursor-pointer bg-white p-6 rounded-2xl border border-gray-100 flex justify-between items-center shadow-sm hover:shadow-md transition-all hover:scale-[1.01] hover:border-brand ${task.status === 'completed' ? 'opacity-50 grayscale-[0.8]' : ''}`}
+                                    style={{ animationDelay: `${index * 0.1}s` }}
+                                    className={`glass glass-hover p-8 flex flex-col md:flex-row justify-between items-center gap-8 reveal-premium group ${
+                                        task.status === 'completed' ? 'opacity-30' : ''
+                                    }`}
                                 >
-                                    <div className="flex items-center gap-4">
-                                        {/* Punto de estado con latido si está pendiente */}
-                                        <div className={`w-3 h-3 rounded-full ${task.status === 'completed' ? 'bg-green-500' : 'bg-yellow-400 animate-pulse'}`}></div>
-                                        <div>
-                                            <h4 className={`font-bold text-gray-900 transition-colors group-hover:text-brand ${task.status === 'completed' ? 'line-through text-gray-400' : ''}`}>
+                                    <div className="flex items-center gap-8 w-full">
+                                        {/* Estado Visual Táctico */}
+                                        <div className="relative">
+                                            <div className={`w-3 h-3 rounded-full ${
+                                                task.status === 'completed' ? 'bg-green-500 shadow-[0_0_15px_#22C55E]' : 'bg-cyber-blue animate-pulse shadow-[0_0_15px_#00D1FF]'
+                                            }`}></div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <h4 className={`text-xl font-black tracking-tight group-hover:text-cyber-blue transition-colors duration-500 ${
+                                                task.status === 'completed' ? 'line-through text-cyber-silver/40' : 'text-white'
+                                            }`}>
                                                 {task.title}
                                             </h4>
-                                            <p className="text-xs text-gray-400">
-                                                Vence el: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'Sin fecha'}
+                                            <p className="text-[9px] font-black text-cyber-silver/20 uppercase tracking-widest">
+                                                Cierre_Estimado: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'TBD'}
                                             </p>
                                         </div>
                                     </div>
                                     
-                                    <div className="flex items-center gap-3">
-                                        {/* 🏷️ Categoría de la tarea (Reunión, Email, etc.) */}
-                                        <span className="text-[9px] font-black uppercase px-2 py-1 bg-gray-50 text-gray-400 rounded-md">
+                                    <div className="flex items-center gap-6 w-full md:w-auto justify-end">
+                                        <span className="text-[8px] font-black uppercase tracking-[0.3em] px-4 py-1.5 bg-white/[0.03] border border-white/5 text-cyber-silver/40 rounded-lg group-hover:border-cyber-blue/30 transition-colors">
                                             {task.category || 'General'}
                                         </span>
-                                        
-                                        <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-lg ${
-                                            task.status === 'completed' ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-700'
-                                        }`}>
-                                            {task.status === 'completed' ? 'Hecho' : 'Ver Detalle'}
-                                        </span>
+                                        <button className="text-[9px] font-black uppercase text-cyber-blue/60 hover:text-white tracking-widest transition-colors">
+                                            Detalle
+                                        </button>
                                     </div>
                                 </div>
                             ))
